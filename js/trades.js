@@ -2,7 +2,7 @@
 
 // Créer un trade
 async function createTrade(trade) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('trades')
         .insert([trade])
         .select()
@@ -14,7 +14,7 @@ async function createTrade(trade) {
 
 // Récupérer tous les trades
 async function getTrades(filters = {}) {
-    let query = supabase
+    let query = supabaseClient
         .from('trades')
         .select('*')
         .order('trade_date', { ascending: false })
@@ -41,7 +41,7 @@ async function getTrades(filters = {}) {
 
 // Récupérer un trade par ID
 async function getTrade(id) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('trades')
         .select('*')
         .eq('id', id)
@@ -61,7 +61,7 @@ async function updateTrade(id, updates) {
         updates.potentiel_r
     );
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('trades')
         .update(updates)
         .eq('id', id)
@@ -74,7 +74,7 @@ async function updateTrade(id, updates) {
 
 // Supprimer un trade
 async function deleteTrade(id) {
-    const { error } = await supabase
+    const { error } = await supabaseClient
         .from('trades')
         .delete()
         .eq('id', id);
@@ -85,7 +85,7 @@ async function deleteTrade(id) {
 
 // Calculer les statistiques
 async function getStats() {
-    const { data: trades, error } = await supabase
+    const { data: trades, error } = await supabaseClient
         .from('trades')
         .select('status, r_obtenu, mindset, is_complete');
     
@@ -124,7 +124,7 @@ async function getStats() {
 
 // Récupérer les assets uniques (pour les filtres)
 async function getAssets() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('trades')
         .select('asset')
         .order('asset');
