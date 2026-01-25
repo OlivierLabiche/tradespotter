@@ -6,6 +6,44 @@
     <title>TradeSpotter</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Completion badges */
+        .completion-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .completion-badge.logged {
+            background: rgba(139, 139, 154, 0.2);
+            color: #8b8b9a;
+        }
+        .completion-badge.inprogress {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        .completion-badge.incomplete {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+            animation: pulse-warning 2s infinite;
+        }
+        .completion-badge.toanalyze {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+        .completion-badge.complete {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .needs-attention {
+            border-left: 3px solid #ffa502;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -37,6 +75,8 @@
                 <div class="filters">
                     <button class="filter-btn active" data-filter="all">Tous</button>
                     <button class="filter-btn" data-filter="encours">🔄 En cours</button>
+                    <button class="filter-btn" data-filter="incomplete">⚠️ Incomplets</button>
+                    <button class="filter-btn" data-filter="toanalyze">🔍 À analyser</button>
                     <button class="filter-btn" data-filter="tp">✅ TP</button>
                     <button class="filter-btn" data-filter="sl">❌ SL</button>
                     <button class="filter-btn" data-filter="plan">🎯 Plan</button>
@@ -53,7 +93,7 @@
                                 <th>Dir</th>
                                 <th>État</th>
                                 <th>Résultat</th>
-                                <th>Potentiel</th>
+                                <th>Complétion</th>
                                 <th>R</th>
                                 <th>Score</th>
                                 <th></th>
@@ -84,6 +124,7 @@
     <script src="js/trades.js"></script>
     <script>
         let currentFilter = 'all';
+        let allTrades = [];
 
         // Init
         document.addEventListener('DOMContentLoaded', async () => {
@@ -130,15 +171,8 @@
         // Load trades
         async function loadTrades() {
             try {
-                let filters = {};
-                if (currentFilter === 'encours') filters.status = 'encours';
-                else if (currentFilter === 'tp') filters.status = 'tp';
-                else if (currentFilter === 'sl') filters.status = 'sl';
-                else if (currentFilter === 'plan') filters.mindset = 'plan';
-                else if (currentFilter === 'intuitif') filters.mindset = 'intuitif';
-
-                const trades = await getTrades(filters);
-                renderTrades(trades);
+                allTrades = await getTrades();
+                applyFilter();
             } catch (error) {
                 console.error('Erreur trades:', error);
                 document.getElementById('tradesBody').innerHTML = `
@@ -148,6 +182,35 @@
                     </td></tr>
                 `;
             }
+        }
+
+        // Apply current filter
+        function applyFilter() {
+            let filtered = allTrades;
+
+            if (currentFilter === 'encours') {
+                filtered = allTrades.filter(t => t.status === 'encours');
+            } else if (currentFilter === 'tp') {
+                filtered = allTrades.filter(t => t.status === 'tp');
+            } else if (currentFilter === 'sl') {
+                filtered = allTrades.filter(t => t.status === 'sl');
+            } else if (currentFilter === 'plan') {
+                filtered = allTrades.filter(t => t.mindset === 'plan');
+            } else if (currentFilter === 'intuitif') {
+                filtered = allTrades.filter(t => t.mindset === 'intuitif');
+            } else if (currentFilter === 'incomplete') {
+                filtered = allTrades.filter(t => {
+                    const completion = getCompletionStatus(t);
+                    return completion.alert;
+                });
+            } else if (currentFilter === 'toanalyze') {
+                filtered = allTrades.filter(t => {
+                    const completion = getCompletionStatus(t);
+                    return completion.level === 4;
+                });
+            }
+
+            renderTrades(filtered);
         }
 
         // Render trades table
@@ -164,19 +227,74 @@
                 return;
             }
 
-            tbody.innerHTML = trades.map(t => `
-                <tr class="${t.status === 'encours' ? 'encours' : ''}" onclick="window.location='trade.html?id=${t.id}'" style="cursor:pointer">
+            tbody.innerHTML = trades.map(t => {
+                const completion = getCompletionStatus(t);
+                return `
+                <tr class="${t.status === 'encours' ? 'encours' : ''} ${completion.alert ? 'needs-attention' : ''}" onclick="window.location='trade.html?id=${t.id}'" style="cursor:pointer">
                     <td>${formatDate(t.trade_date)}</td>
                     <td><strong>${t.asset}</strong></td>
                     <td><span class="badge ${t.direction}">${t.direction?.toUpperCase() || '-'}</span></td>
                     <td>${t.mindset ? (t.mindset === 'plan' ? '🎯' : '🎲') : '-'}</td>
                     <td>${renderStatus(t.status)}</td>
-                    <td>${t.potentiel_r ? t.potentiel_r + 'R' : '-'}</td>
+                    <td>${renderCompletion(completion)}</td>
                     <td>${t.r_obtenu ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu + 'R' : '-'}</td>
                     <td>${t.score_avg || '-'}</td>
                     <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); window.location='trade.html?id=${t.id}'">✏️</button></td>
                 </tr>
-            `).join('');
+            `}).join('');
+        }
+
+        // Déterminer le statut de complétion
+        function getCompletionStatus(trade) {
+            const hasScores = trade.score_avg !== null;
+            const isFinished = trade.status && trade.status !== 'encours';
+            const hasResult = trade.r_obtenu !== null;
+            const hasPotentiel = trade.potentiel_r !== null;
+            const hasBiais = trade.biais_ok !== null;
+            const hasPoi = trade.poi_ok !== null;
+            const hasAnalyseFinale = hasPotentiel && hasBiais && hasPoi;
+            
+            if (!isFinished) {
+                // Trade en cours
+                if (!hasScores) {
+                    return { level: 1, label: '📝 Loggé', alert: false };
+                } else {
+                    return { level: 2, label: '⏳ En cours', alert: false };
+                }
+            } else {
+                // Trade terminé
+                if (!hasResult) {
+                    // Pas encore de R obtenu - c'est normal, on attend
+                    return { level: 2, label: '⏳ R en attente', alert: false };
+                } else if (!hasScores) {
+                    // R obtenu mais pas de scoring = fiche incomplète
+                    return { level: 3, label: '⚠️ Incomplet', alert: true, missing: ['Scoring'] };
+                } else if (!hasAnalyseFinale) {
+                    // Scoring OK mais manque analyse finale
+                    const missing = [];
+                    if (!hasPotentiel) missing.push('Potentiel');
+                    if (!hasBiais) missing.push('Biais');
+                    if (!hasPoi) missing.push('POI');
+                    return { level: 4, label: '🔍 À analyser', alert: false, missing: missing };
+                } else {
+                    return { level: 5, label: '✅ Complet', alert: false };
+                }
+            }
+        }
+
+        // Afficher le statut de complétion
+        function renderCompletion(completion) {
+            if (completion.level === 1) {
+                return `<span class="completion-badge logged">${completion.label}</span>`;
+            } else if (completion.level === 2) {
+                return `<span class="completion-badge inprogress">${completion.label}</span>`;
+            } else if (completion.level === 3) {
+                return `<span class="completion-badge incomplete" title="Manque: ${completion.missing.join(', ')}">${completion.label}</span>`;
+            } else if (completion.level === 4) {
+                return `<span class="completion-badge toanalyze" title="Manque: ${completion.missing.join(', ')}">${completion.label}</span>`;
+            } else {
+                return `<span class="completion-badge complete">${completion.label}</span>`;
+            }
         }
 
         // Render status badge
@@ -205,7 +323,7 @@
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentFilter = btn.dataset.filter;
-                    await loadTrades();
+                    applyFilter();
                 });
             });
         }
