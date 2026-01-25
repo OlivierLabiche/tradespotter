@@ -9,7 +9,7 @@ async function uploadImage(file, tradeId, type) {
     const fileName = `${tradeId}_${type}_${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
     
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)
         .upload(filePath, file, {
             cacheControl: '3600',
@@ -19,7 +19,7 @@ async function uploadImage(file, tradeId, type) {
     if (error) throw error;
     
     // Récupérer l'URL publique
-    const { data: urlData } = supabase.storage
+    const { data: urlData } = supabaseClient.storage
         .from(BUCKET_NAME)
         .getPublicUrl(filePath);
     
@@ -83,7 +83,7 @@ async function deleteImage(imageUrl) {
     const urlParts = imageUrl.split('/');
     const fileName = urlParts[urlParts.length - 1];
     
-    const { error } = await supabase.storage
+    const { error } = await supabaseClient.storage
         .from(BUCKET_NAME)
         .remove([fileName]);
     
