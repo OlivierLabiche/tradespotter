@@ -335,10 +335,6 @@
 
                 <div class="form-grid-2" style="margin-top: 1.5rem;">
                     <div class="form-group">
-                        <label class="form-label">Potentiel du trade (R)</label>
-                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
-                    </div>
-                    <div class="form-group">
                         <label class="form-label">R obtenu</label>
                         <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
                     </div>
@@ -347,6 +343,36 @@
                 <div class="form-group" style="margin-top: 1rem;">
                     <label class="form-label">Notes / Analyse</label>
                     <textarea class="form-textarea" id="notes" placeholder="Ce qui a bien/mal fonctionné..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyse Finale (visible quand trade terminé) -->
+        <div class="card" id="analyseFinalCard" style="display:none">
+            <div class="card-header">
+                <h2 class="card-title">🔍 Analyse finale</h2>
+                <span class="badge-info">À remplir après clôture</span>
+            </div>
+            <div class="card-content">
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Potentiel du trade (R)</label>
+                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Le biais était bon ?</label>
+                        <div class="toggle-buttons">
+                            <button type="button" class="toggle-btn yes" data-field="biais" data-value="true" onclick="setAnalyse('biais', true)">✅ Oui</button>
+                            <button type="button" class="toggle-btn no" data-field="biais" data-value="false" onclick="setAnalyse('biais', false)">❌ Non</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Le POI était bon ?</label>
+                        <div class="toggle-buttons">
+                            <button type="button" class="toggle-btn yes" data-field="poi" data-value="true" onclick="setAnalyse('poi', true)">✅ Oui</button>
+                            <button type="button" class="toggle-btn no" data-field="poi" data-value="false" onclick="setAnalyse('poi', false)">❌ Non</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -410,6 +436,50 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4); }
             50% { box-shadow: 0 0 0 8px rgba(0, 212, 170, 0); }
         }
+
+        /* Analyse finale section */
+        .badge-info {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .toggle-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn.yes:hover, .toggle-btn.yes.active {
+            border-color: var(--accent-bull);
+            color: var(--accent-bull);
+            background: rgba(0, 212, 170, 0.1);
+        }
+        
+        .toggle-btn.no:hover, .toggle-btn.no.active {
+            border-color: var(--accent-bear);
+            color: var(--accent-bear);
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        #analyseFinalCard {
+            border-color: var(--accent-info);
+            background: linear-gradient(135deg, var(--bg-card), rgba(52, 152, 219, 0.05));
+        }
     </style>
 
     <!-- Scripts -->
@@ -429,7 +499,8 @@
             checklist: { liqHTF: false, liqLTF: false, bos: false, objectif: false },
             options: {},
             scores: { liqHTF: 0, liqLTF: 0, bos: 0, objectif: 0 },
-            images: { entry: null, context: null, exit: null }
+            images: { entry: null, context: null, exit: null },
+            analyse: { biais: null, poi: null }
         };
 
         // Init
@@ -588,6 +659,10 @@
                 document.getElementById('rObtenu').value = trade.r_obtenu || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
+                // Analyse finale
+                if (trade.biais_ok !== null) setAnalyse('biais', trade.biais_ok);
+                if (trade.poi_ok !== null) setAnalyse('poi', trade.poi_ok);
+                
                 updateStatusBadge(trade.status);
                 
             } catch (error) {
@@ -620,6 +695,14 @@
                 if (btn.classList.contains(value)) btn.classList.add('active');
             });
             updateStatusBadge(value);
+            
+            // Afficher/cacher la section Analyse finale
+            const analyseCard = document.getElementById('analyseFinalCard');
+            if (value && value !== 'encours') {
+                analyseCard.style.display = 'block';
+            } else {
+                analyseCard.style.display = 'none';
+            }
         }
 
         function updateStatusBadge(status) {
@@ -633,6 +716,17 @@
             };
             badge.textContent = badges[status] || '';
             badge.className = `badge ${status}`;
+        }
+
+        // Analyse finale
+        function setAnalyse(field, value) {
+            state.analyse[field] = value;
+            document.querySelectorAll(`.toggle-btn[data-field="${field}"]`).forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === String(value)) {
+                    btn.classList.add('active');
+                }
+            });
         }
 
         // Checklist
@@ -879,6 +973,10 @@
                     potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
                     r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
                     notes_exit: document.getElementById('notes').value || null,
+                    
+                    // Analyse finale
+                    biais_ok: state.analyse.biais,
+                    poi_ok: state.analyse.poi,
                     
                     img_entry: state.images.entry || null,
                     img_context: state.images.context || null,
