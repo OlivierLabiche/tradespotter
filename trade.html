@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade - TradeSpotter</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">TradeSpotter</a>
+        <div class="header-actions">
+            <a href="index.html" class="btn btn-secondary">← Retour</a>
+            <button class="btn btn-danger" id="btnDelete" style="display:none" onclick="handleDelete()">🗑️ Supprimer</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Identification -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📋 Identification</h2>
+                <span class="badge" id="statusBadge"></span>
+            </div>
+            <div class="card-content">
+                <!-- État d'esprit en premier -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label">État d'esprit</label>
+                    <div class="mindset-toggle">
+                        <button type="button" class="mindset-btn" data-value="plan" onclick="setMindset('plan')">🎯 Je respecte le plan</button>
+                        <button type="button" class="mindset-btn intuitif" data-value="intuitif" onclick="setMindset('intuitif')">🎲 Mode intuitif</button>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Actif</label>
+                        <input type="text" class="form-input" id="asset" placeholder="BTCUSD" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="tradeDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Heure</label>
+                        <input type="time" class="form-input" id="tradeTime">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TF HTF</label>
+                        <select class="form-select" id="tfHTF">
+                            <option value="">--</option>
+                            <option value="M15">M15</option>
+                            <option value="M30">M30</option>
+                            <option value="H1">H1</option>
+                            <option value="H4">H4</option>
+                            <option value="D1">D1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TF LTF</label>
+                        <select class="form-select" id="tfLTF">
+                            <option value="">--</option>
+                            <option value="M1">M1</option>
+                            <option value="M5">M5</option>
+                            <option value="M15">M15</option>
+                            <option value="M30">M30</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mode</label>
+                        <select class="form-select" id="mode">
+                            <option value="live">🔴 Live</option>
+                            <option value="backtest">📚 Backtest</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Direction</label>
+                    <div class="direction-toggle">
+                        <button type="button" class="direction-btn long" onclick="setDirection('long')">📈 LONG</button>
+                        <button type="button" class="direction-btn short" onclick="setDirection('short')">📉 SHORT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist ICT -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">✅ Checklist ICT</h2>
+            </div>
+            <div class="card-content">
+                <!-- Liquidation HTF -->
+                <div class="checklist-item">
+                    <div class="checklist-header" onclick="toggleChecklist('liqHTF')">
+                        <div class="checklist-checkbox" id="checkLiqHTF">✓</div>
+                        <span class="checklist-label">Liquidation HTF</span>
+                    </div>
+                    <div class="checklist-details" id="detailsLiqHTF">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Type</label>
+                                <div class="option-group" data-field="liqHTFType">
+                                    <button class="option-btn" data-value="BSL">BSL</button>
+                                    <button class="option-btn" data-value="SSL">SSL</button>
+                                    <button class="option-btn" data-value="EQH">EQH</button>
+                                    <button class="option-btn" data-value="EQL">EQL</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Force</label>
+                                <div class="option-group" data-field="liqHTFForce">
+                                    <button class="option-btn" data-value="faible">Faible</button>
+                                    <button class="option-btn" data-value="forte">Forte</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liquidation LTF -->
+                <div class="checklist-item">
+                    <div class="checklist-header" onclick="toggleChecklist('liqLTF')">
+                        <div class="checklist-checkbox" id="checkLiqLTF">✓</div>
+                        <span class="checklist-label">Liquidation LTF</span>
+                    </div>
+                    <div class="checklist-details" id="detailsLiqLTF">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Type</label>
+                                <div class="option-group" data-field="liqLTFType">
+                                    <button class="option-btn" data-value="BSL">BSL</button>
+                                    <button class="option-btn" data-value="SSL">SSL</button>
+                                    <button class="option-btn" data-value="EQH">EQH</button>
+                                    <button class="option-btn" data-value="EQL">EQL</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Force</label>
+                                <div class="option-group" data-field="liqLTFForce">
+                                    <button class="option-btn" data-value="faible">Faible</button>
+                                    <button class="option-btn" data-value="forte">Forte</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOS -->
+                <div class="checklist-item">
+                    <div class="checklist-header" onclick="toggleChecklist('bos')">
+                        <div class="checklist-checkbox" id="checkBOS">✓</div>
+                        <span class="checklist-label">BOS dans le sens HTF</span>
+                    </div>
+                    <div class="checklist-details" id="detailsBOS">
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Pris avant clôture ?</label>
+                                <div class="option-group" data-field="bosAvantCloture">
+                                    <button class="option-btn" data-value="oui">Oui</button>
+                                    <button class="option-btn" data-value="non">Non</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mèche ou Corps ?</label>
+                                <div class="option-group" data-field="bosMecheCorps">
+                                    <button class="option-btn" data-value="meche">Mèche</button>
+                                    <button class="option-btn" data-value="corps">Corps</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Prend une liquidité ?</label>
+                                <div class="option-group" data-field="bosLiquidite">
+                                    <button class="option-btn" data-value="non">Non</button>
+                                    <button class="option-btn" data-value="TR">TR</button>
+                                    <button class="option-btn" data-value="EQH">EQH</button>
+                                    <button class="option-btn" data-value="EQL">EQL</button>
+                                    <button class="option-btn" data-value="TL">TL</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objectif -->
+                <div class="checklist-item">
+                    <div class="checklist-header" onclick="toggleChecklist('objectif')">
+                        <div class="checklist-checkbox" id="checkObjectif">✓</div>
+                        <span class="checklist-label">Objectif de liquidité clair</span>
+                    </div>
+                    <div class="checklist-details" id="detailsObjectif">
+                        <div class="form-group">
+                            <label class="form-label">Type d'objectif</label>
+                            <div class="option-group" data-field="objectifType">
+                                <button class="option-btn" data-value="BSL">BSL</button>
+                                <button class="option-btn" data-value="SSL">SSL</button>
+                                <button class="option-btn" data-value="EQH">EQH</button>
+                                <button class="option-btn" data-value="EQL">EQL</button>
+                                <button class="option-btn" data-value="FVG">FVG</button>
+                                <button class="option-btn" data-value="OB">OB</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scoring -->
+                <div style="margin-top: 1.5rem;">
+                    <label class="form-label" style="margin-bottom: 1rem; display: block;">⭐ Scoring</label>
+                    <div class="scoring-grid">
+                        <div class="scoring-row">
+                            <span class="scoring-label">Liq HTF</span>
+                            <div class="stars" data-score="liqHTF">
+                                <span class="star" onclick="setScore('liqHTF', 1)">☆</span>
+                                <span class="star" onclick="setScore('liqHTF', 2)">☆</span>
+                                <span class="star" onclick="setScore('liqHTF', 3)">☆</span>
+                                <span class="star" onclick="setScore('liqHTF', 4)">☆</span>
+                                <span class="star" onclick="setScore('liqHTF', 5)">☆</span>
+                            </div>
+                        </div>
+                        <div class="scoring-row">
+                            <span class="scoring-label">Liq LTF</span>
+                            <div class="stars" data-score="liqLTF">
+                                <span class="star" onclick="setScore('liqLTF', 1)">☆</span>
+                                <span class="star" onclick="setScore('liqLTF', 2)">☆</span>
+                                <span class="star" onclick="setScore('liqLTF', 3)">☆</span>
+                                <span class="star" onclick="setScore('liqLTF', 4)">☆</span>
+                                <span class="star" onclick="setScore('liqLTF', 5)">☆</span>
+                            </div>
+                        </div>
+                        <div class="scoring-row">
+                            <span class="scoring-label">BOS</span>
+                            <div class="stars" data-score="bos">
+                                <span class="star" onclick="setScore('bos', 1)">☆</span>
+                                <span class="star" onclick="setScore('bos', 2)">☆</span>
+                                <span class="star" onclick="setScore('bos', 3)">☆</span>
+                                <span class="star" onclick="setScore('bos', 4)">☆</span>
+                                <span class="star" onclick="setScore('bos', 5)">☆</span>
+                            </div>
+                        </div>
+                        <div class="scoring-row">
+                            <span class="scoring-label">Objectif</span>
+                            <div class="stars" data-score="objectif">
+                                <span class="star" onclick="setScore('objectif', 1)">☆</span>
+                                <span class="star" onclick="setScore('objectif', 2)">☆</span>
+                                <span class="star" onclick="setScore('objectif', 3)">☆</span>
+                                <span class="star" onclick="setScore('objectif', 4)">☆</span>
+                                <span class="star" onclick="setScore('objectif', 5)">☆</span>
+                            </div>
+                        </div>
+                        <div class="scoring-total">
+                            <div class="scoring-value" id="scoreAvg">-</div>
+                            <div class="scoring-label-big">Moyenne</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screenshots -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📸 Screenshots</h2>
+            </div>
+            <div class="card-content">
+                <div class="images-grid">
+                    <!-- Entrée -->
+                    <div class="image-field">
+                        <label>Prise du trade (entrée)</label>
+                        <input type="text" class="form-input" id="imgEntryUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
+                        <div class="image-drop-zone" id="dropEntry" tabindex="0">
+                            <div class="icon">📷</div>
+                            <div class="text">Glisser une image ou Ctrl+V</div>
+                            <div class="hint">ou cliquer pour sélectionner</div>
+                        </div>
+                        <div class="image-preview-container" id="previewEntryContainer">
+                            <img class="image-preview" id="previewEntry" onclick="zoomImage(this.src)">
+                            <button class="btn-remove-image" onclick="removeImage('entry')">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- Contexte -->
+                    <div class="image-field">
+                        <label>Contexte HTF</label>
+                        <input type="text" class="form-input" id="imgContextUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
+                        <div class="image-drop-zone" id="dropContext" tabindex="0">
+                            <div class="icon">📷</div>
+                            <div class="text">Glisser une image ou Ctrl+V</div>
+                            <div class="hint">ou cliquer pour sélectionner</div>
+                        </div>
+                        <div class="image-preview-container" id="previewContextContainer">
+                            <img class="image-preview" id="previewContext" onclick="zoomImage(this.src)">
+                            <button class="btn-remove-image" onclick="removeImage('context')">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- Sortie -->
+                    <div class="image-field">
+                        <label>Fin du trade</label>
+                        <input type="text" class="form-input" id="imgExitUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
+                        <div class="image-drop-zone" id="dropExit" tabindex="0">
+                            <div class="icon">📷</div>
+                            <div class="text">Glisser une image ou Ctrl+V</div>
+                            <div class="hint">ou cliquer pour sélectionner</div>
+                        </div>
+                        <div class="image-preview-container" id="previewExitContainer">
+                            <img class="image-preview" id="previewExit" onclick="zoomImage(this.src)">
+                            <button class="btn-remove-image" onclick="removeImage('exit')">✕</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résultat -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🎯 Résultat</h2>
+            </div>
+            <div class="card-content">
+                <div class="result-options">
+                    <button class="result-btn encours" onclick="setStatus('encours')">🔄 En cours</button>
+                    <button class="result-btn tp" onclick="setStatus('tp')">✅ TP</button>
+                    <button class="result-btn be" onclick="setStatus('be')">⚖️ BE</button>
+                    <button class="result-btn sl" onclick="setStatus('sl')">❌ SL</button>
+                    <button class="result-btn positif" onclick="setStatus('positif')">💰 Positif</button>
+                </div>
+
+                <div class="form-grid-2" style="margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label">Potentiel du trade (R)</label>
+                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">R obtenu</label>
+                        <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Notes / Analyse</label>
+                    <textarea class="form-textarea" id="notes" placeholder="Ce qui a bien/mal fonctionné..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-bar">
+            <button class="btn btn-primary" id="btnSave" onclick="handleSave()">💾 Enregistrer</button>
+        </div>
+    </main>
+
+    <!-- Modal Image -->
+    <div class="modal-overlay" id="imageModal" onclick="closeModal()">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <img class="modal-image" id="modalImage">
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trades.js"></script>
+    <script src="js/images.js"></script>
+    <script>
+        // State
+        let tradeId = null;
+        let isNew = true;
+        const state = {
+            mindset: null,
+            direction: null,
+            status: 'encours',
+            checklist: { liqHTF: false, liqLTF: false, bos: false, objectif: false },
+            options: {},
+            scores: { liqHTF: 0, liqLTF: 0, bos: 0, objectif: 0 },
+            images: { entry: null, context: null, exit: null }
+        };
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            tradeId = params.get('id');
+            
+            if (tradeId) {
+                isNew = false;
+                await loadTrade(tradeId);
+                document.getElementById('btnDelete').style.display = 'block';
+                document.getElementById('btnSave').textContent = '💾 Mettre à jour';
+            } else {
+                setDefaults();
+            }
+
+            setupOptionButtons();
+            setupImageInputs();
+            setupDropZones();
+        });
+
+        // Set defaults for new trade
+        function setDefaults() {
+            const now = new Date();
+            document.getElementById('tradeDate').value = now.toISOString().split('T')[0];
+            document.getElementById('tradeTime').value = now.toTimeString().slice(0, 5);
+            setStatus('encours');
+        }
+
+        // Load existing trade
+        async function loadTrade(id) {
+            try {
+                const trade = await getTrade(id);
+                
+                // Identification
+                document.getElementById('asset').value = trade.asset || '';
+                document.getElementById('tradeDate').value = trade.trade_date || '';
+                document.getElementById('tradeTime').value = trade.trade_time?.slice(0, 5) || '';
+                document.getElementById('tfHTF').value = trade.tf_htf || '';
+                document.getElementById('tfLTF').value = trade.tf_ltf || '';
+                document.getElementById('mode').value = trade.mode || 'live';
+                
+                if (trade.mindset) setMindset(trade.mindset);
+                if (trade.direction) setDirection(trade.direction);
+                
+                // Checklist
+                if (trade.liq_htf) {
+                    toggleChecklist('liqHTF', true);
+                    if (trade.liq_htf_type) setOption('liqHTFType', trade.liq_htf_type);
+                    if (trade.liq_htf_force) setOption('liqHTFForce', trade.liq_htf_force);
+                }
+                if (trade.liq_ltf) {
+                    toggleChecklist('liqLTF', true);
+                    if (trade.liq_ltf_type) setOption('liqLTFType', trade.liq_ltf_type);
+                    if (trade.liq_ltf_force) setOption('liqLTFForce', trade.liq_ltf_force);
+                }
+                if (trade.bos) {
+                    toggleChecklist('bos', true);
+                    if (trade.bos_avant_cloture) setOption('bosAvantCloture', trade.bos_avant_cloture);
+                    if (trade.bos_meche_corps) setOption('bosMecheCorps', trade.bos_meche_corps);
+                    if (trade.bos_liquidite) setOption('bosLiquidite', trade.bos_liquidite);
+                }
+                if (trade.objectif) {
+                    toggleChecklist('objectif', true);
+                    if (trade.objectif_type) setOption('objectifType', trade.objectif_type);
+                }
+                
+                // Scores
+                if (trade.score_liq_htf) setScore('liqHTF', trade.score_liq_htf);
+                if (trade.score_liq_ltf) setScore('liqLTF', trade.score_liq_ltf);
+                if (trade.score_bos) setScore('bos', trade.score_bos);
+                if (trade.score_objectif) setScore('objectif', trade.score_objectif);
+                
+                // Images
+                if (trade.img_entry) loadImagePreview('entry', trade.img_entry);
+                if (trade.img_context) loadImagePreview('context', trade.img_context);
+                if (trade.img_exit) loadImagePreview('exit', trade.img_exit);
+                
+                // Résultat
+                if (trade.status) setStatus(trade.status);
+                document.getElementById('potentielR').value = trade.potentiel_r || '';
+                document.getElementById('rObtenu').value = trade.r_obtenu || '';
+                document.getElementById('notes').value = trade.notes_exit || '';
+                
+                updateStatusBadge(trade.status);
+                
+            } catch (error) {
+                console.error('Erreur chargement:', error);
+                showToast('❌ Erreur de chargement', true);
+            }
+        }
+
+        // Mindset
+        function setMindset(value) {
+            state.mindset = value;
+            document.querySelectorAll('.mindset-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === value);
+            });
+        }
+
+        // Direction
+        function setDirection(value) {
+            state.direction = value;
+            document.querySelectorAll('.direction-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.classList.contains(value));
+            });
+        }
+
+        // Status
+        function setStatus(value) {
+            state.status = value;
+            document.querySelectorAll('.result-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(value)) btn.classList.add('active');
+            });
+            updateStatusBadge(value);
+        }
+
+        function updateStatusBadge(status) {
+            const badge = document.getElementById('statusBadge');
+            const badges = {
+                'encours': '🔄 En cours',
+                'tp': '✅ TP',
+                'be': '⚖️ BE',
+                'sl': '❌ SL',
+                'positif': '💰 Positif'
+            };
+            badge.textContent = badges[status] || '';
+            badge.className = `badge ${status}`;
+        }
+
+        // Checklist
+        function toggleChecklist(id, forceOpen = false) {
+            if (forceOpen) {
+                state.checklist[id] = true;
+            } else {
+                state.checklist[id] = !state.checklist[id];
+            }
+            
+            const checkbox = document.getElementById(`check${id.charAt(0).toUpperCase() + id.slice(1)}`);
+            const details = document.getElementById(`details${id.charAt(0).toUpperCase() + id.slice(1)}`);
+            
+            checkbox.classList.toggle('checked', state.checklist[id]);
+            details.classList.toggle('visible', state.checklist[id]);
+        }
+
+        // Options
+        function setupOptionButtons() {
+            document.querySelectorAll('.option-group').forEach(group => {
+                group.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        state.options[group.dataset.field] = btn.dataset.value;
+                    });
+                });
+            });
+        }
+
+        function setOption(field, value) {
+            state.options[field] = value;
+            const group = document.querySelector(`[data-field="${field}"]`);
+            if (group) {
+                group.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.value === value);
+                });
+            }
+        }
+
+        // Scores
+        function setScore(key, value) {
+            state.scores[key] = value;
+            const container = document.querySelector(`[data-score="${key}"]`);
+            container.querySelectorAll('.star').forEach((star, i) => {
+                star.classList.toggle('active', i < value);
+                star.textContent = i < value ? '★' : '☆';
+            });
+            updateScoreAvg();
+        }
+
+        function updateScoreAvg() {
+            const scores = Object.values(state.scores).filter(s => s > 0);
+            const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '-';
+            document.getElementById('scoreAvg').textContent = avg;
+        }
+
+        // Images
+        function setupImageInputs() {
+            ['Entry', 'Context', 'Exit'].forEach(type => {
+                const input = document.getElementById(`img${type}Url`);
+                input.addEventListener('change', async () => {
+                    const url = input.value.trim();
+                    if (url) {
+                        try {
+                            const imageUrl = await downloadTradingViewImage(url);
+                            loadImagePreview(type.toLowerCase(), imageUrl);
+                        } catch (error) {
+                            showToast('❌ URL invalide', true);
+                        }
+                    }
+                });
+            });
+        }
+
+        function setupDropZones() {
+            ['entry', 'context', 'exit'].forEach(type => {
+                const dropZone = document.getElementById(`drop${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                
+                // Drag & drop
+                dropZone.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+                
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+                
+                dropZone.addEventListener('drop', async e => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        await handleImageUpload(type, file);
+                    }
+                });
+                
+                // Click to select
+                dropZone.addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = async e => {
+                        if (e.target.files[0]) {
+                            await handleImageUpload(type, e.target.files[0]);
+                        }
+                    };
+                    input.click();
+                });
+                
+                // Paste (Ctrl+V)
+                dropZone.addEventListener('paste', async e => {
+                    const items = e.clipboardData.items;
+                    for (const item of items) {
+                        if (item.type.startsWith('image/')) {
+                            e.preventDefault();
+                            const file = item.getAsFile();
+                            await handleImageUpload(type, file);
+                            return;
+                        }
+                    }
+                });
+            });
+        }
+
+        async function handleImageUpload(type, file) {
+            try {
+                showToast('📤 Upload en cours...');
+                const id = tradeId || 'new_' + Date.now();
+                const url = await uploadImage(file, id, type);
+                state.images[type] = url;
+                loadImagePreview(type, url);
+                showToast('✅ Image uploadée');
+            } catch (error) {
+                console.error('Erreur upload:', error);
+                showToast('❌ Erreur upload', true);
+            }
+        }
+
+        function loadImagePreview(type, url) {
+            const Type = type.charAt(0).toUpperCase() + type.slice(1);
+            state.images[type] = url;
+            document.getElementById(`preview${Type}`).src = url;
+            document.getElementById(`preview${Type}Container`).classList.add('visible');
+            document.getElementById(`drop${Type}`).style.display = 'none';
+            document.getElementById(`img${Type}Url`).value = url;
+        }
+
+        function removeImage(type) {
+            const Type = type.charAt(0).toUpperCase() + type.slice(1);
+            state.images[type] = null;
+            document.getElementById(`preview${Type}Container`).classList.remove('visible');
+            document.getElementById(`drop${Type}`).style.display = 'flex';
+            document.getElementById(`img${Type}Url`).value = '';
+        }
+
+        // Zoom image
+        function zoomImage(src) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('imageModal').classList.add('visible');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('visible');
+        }
+
+        // Save
+        async function handleSave() {
+            const asset = document.getElementById('asset').value.toUpperCase().trim();
+            if (!asset) {
+                showToast('❌ Actif requis', true);
+                return;
+            }
+            if (!state.direction) {
+                showToast('❌ Direction requise', true);
+                return;
+            }
+
+            const btnSave = document.getElementById('btnSave');
+            btnSave.disabled = true;
+            btnSave.textContent = '⏳ Sauvegarde...';
+
+            try {
+                const scores = state.scores;
+                const activeScores = Object.values(scores).filter(s => s > 0);
+                const scoreAvg = activeScores.length > 0 
+                    ? (activeScores.reduce((a, b) => a + b, 0) / activeScores.length).toFixed(1) 
+                    : null;
+
+                const tradeData = {
+                    asset: asset,
+                    direction: state.direction,
+                    trade_date: document.getElementById('tradeDate').value,
+                    trade_time: document.getElementById('tradeTime').value,
+                    tf_htf: document.getElementById('tfHTF').value || null,
+                    tf_ltf: document.getElementById('tfLTF').value || null,
+                    mode: document.getElementById('mode').value,
+                    mindset: state.mindset,
+                    
+                    liq_htf: state.checklist.liqHTF,
+                    liq_htf_type: state.options.liqHTFType || null,
+                    liq_htf_force: state.options.liqHTFForce || null,
+                    
+                    liq_ltf: state.checklist.liqLTF,
+                    liq_ltf_type: state.options.liqLTFType || null,
+                    liq_ltf_force: state.options.liqLTFForce || null,
+                    
+                    bos: state.checklist.bos,
+                    bos_avant_cloture: state.options.bosAvantCloture || null,
+                    bos_meche_corps: state.options.bosMecheCorps || null,
+                    bos_liquidite: state.options.bosLiquidite || null,
+                    
+                    objectif: state.checklist.objectif,
+                    objectif_type: state.options.objectifType || null,
+                    
+                    score_liq_htf: scores.liqHTF || null,
+                    score_liq_ltf: scores.liqLTF || null,
+                    score_bos: scores.bos || null,
+                    score_objectif: scores.objectif || null,
+                    score_avg: scoreAvg ? parseFloat(scoreAvg) : null,
+                    
+                    status: state.status,
+                    potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
+                    r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
+                    notes_exit: document.getElementById('notes').value || null,
+                    
+                    img_entry: state.images.entry || null,
+                    img_context: state.images.context || null,
+                    img_exit: state.images.exit || null
+                };
+
+                if (isNew) {
+                    const newTrade = await createTrade(tradeData);
+                    tradeId = newTrade.id;
+                    isNew = false;
+                    showToast('✅ Trade créé !');
+                    // Redirect to edit mode
+                    window.history.replaceState({}, '', `trade.html?id=${tradeId}`);
+                    document.getElementById('btnDelete').style.display = 'block';
+                } else {
+                    await updateTrade(tradeId, tradeData);
+                    showToast('✅ Trade mis à jour !');
+                }
+
+                btnSave.textContent = '💾 Enregistrer';
+                btnSave.disabled = false;
+
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+                showToast('❌ Erreur de sauvegarde', true);
+                btnSave.textContent = '💾 Enregistrer';
+                btnSave.disabled = false;
+            }
+        }
+
+        // Delete
+        async function handleDelete() {
+            if (!confirm('Supprimer ce trade ?')) return;
+            
+            try {
+                await deleteTrade(tradeId);
+                showToast('🗑️ Trade supprimé');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                showToast('❌ Erreur de suppression', true);
+            }
+        }
+
+        // Toast
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.toggle('error', isError);
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                handleSave();
+            }
+        });
+    </script>
+</body>
+</html>
