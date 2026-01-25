@@ -17,6 +17,12 @@
     </header>
 
     <main class="container">
+        <!-- Banner pour extension -->
+        <div class="extension-banner" id="extensionBanner" style="display:none">
+            <span>📸 Screenshot dans le presse-papier</span>
+            <span class="hint">Cliquez sur la zone image + <kbd>Ctrl</kbd>+<kbd>V</kbd> pour coller</span>
+        </div>
+
         <!-- Identification -->
         <div class="card">
             <div class="card-header">
@@ -362,6 +368,50 @@
         <span id="toastMessage"></span>
     </div>
 
+    <style>
+        /* Banner extension */
+        .extension-banner {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05));
+            border: 1px solid var(--accent-bull);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: bannerPulse 2s ease-in-out infinite;
+        }
+        .extension-banner span:first-child {
+            font-weight: 600;
+            color: var(--accent-bull);
+        }
+        .extension-banner .hint {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .extension-banner kbd {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+        }
+        @keyframes bannerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* Highlight pour drop zone quand vient de l'extension */
+        .image-drop-zone.from-extension {
+            border-color: var(--accent-bull);
+            animation: dropZonePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes dropZonePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(0, 212, 170, 0); }
+        }
+    </style>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
@@ -371,6 +421,7 @@
         // State
         let tradeId = null;
         let isNew = true;
+        let fromExtension = false;
         const state = {
             mindset: null,
             direction: null,
@@ -385,6 +436,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
             tradeId = params.get('id');
+            fromExtension = params.get('from') === 'extension';
             
             if (tradeId) {
                 isNew = false;
@@ -393,12 +445,85 @@
                 document.getElementById('btnSave').textContent = '💾 Mettre à jour';
             } else {
                 setDefaults();
+                
+                // Si on vient de l'extension, préremplir avec les paramètres URL
+                if (fromExtension) {
+                    prefillFromExtension(params);
+                }
             }
 
             setupOptionButtons();
             setupImageInputs();
             setupDropZones();
         });
+
+        // Préremplir depuis les paramètres de l'extension
+        function prefillFromExtension(params) {
+            // Afficher le banner
+            document.getElementById('extensionBanner').style.display = 'flex';
+            
+            // Asset
+            const asset = params.get('asset');
+            if (asset) {
+                document.getElementById('asset').value = asset.toUpperCase();
+            }
+            
+            // Direction
+            const direction = params.get('direction');
+            if (direction) {
+                setDirection(direction);
+            }
+            
+            // Mindset
+            const mindset = params.get('mindset');
+            if (mindset) {
+                setMindset(mindset);
+            }
+            
+            // Date et heure
+            const date = params.get('date');
+            if (date) {
+                document.getElementById('tradeDate').value = date;
+            }
+            
+            const time = params.get('time');
+            if (time) {
+                document.getElementById('tradeTime').value = time;
+            }
+            
+            // Timeframe (essayer de mapper vers LTF)
+            const tf = params.get('tf');
+            if (tf) {
+                const tfLower = tf.toLowerCase();
+                const tfSelect = document.getElementById('tfLTF');
+                // Mapper les timeframes TradingView vers nos options
+                const tfMap = {
+                    '1': 'M1', '1m': 'M1',
+                    '5': 'M5', '5m': 'M5',
+                    '15': 'M15', '15m': 'M15',
+                    '30': 'M30', '30m': 'M30',
+                    '60': 'H1', '1h': 'H1',
+                    '240': 'H4', '4h': 'H4',
+                    'd': 'D1', '1d': 'D1'
+                };
+                const mappedTf = tfMap[tfLower] || tfMap[tf];
+                if (mappedTf) {
+                    tfSelect.value = mappedTf;
+                }
+            }
+            
+            // Mettre en évidence la zone de drop pour l'image
+            const dropEntry = document.getElementById('dropEntry');
+            dropEntry.classList.add('from-extension');
+            dropEntry.focus();
+            
+            // Toast personnalisé selon le mindset
+            if (mindset === 'intuitif') {
+                showToast('🎲 Mode intuitif - Ctrl+V pour le screenshot');
+            } else {
+                showToast('📸 Ctrl+V pour coller le screenshot');
+            }
+        }
 
         // Set defaults for new trade
         function setDefaults() {
@@ -619,7 +744,7 @@
                     input.click();
                 });
                 
-                // Paste (Ctrl+V)
+                // Paste (Ctrl+V) - fonctionne même sans focus si c'est le premier champ
                 dropZone.addEventListener('paste', async e => {
                     const items = e.clipboardData.items;
                     for (const item of items) {
@@ -627,10 +752,30 @@
                             e.preventDefault();
                             const file = item.getAsFile();
                             await handleImageUpload(type, file);
+                            // Enlever le highlight de l'extension
+                            dropZone.classList.remove('from-extension');
                             return;
                         }
                     }
                 });
+            });
+            
+            // Global paste handler pour coller dans entry par défaut si vient de l'extension
+            document.addEventListener('paste', async e => {
+                if (!fromExtension) return;
+                if (state.images.entry) return; // Déjà une image
+                
+                const items = e.clipboardData.items;
+                for (const item of items) {
+                    if (item.type.startsWith('image/')) {
+                        e.preventDefault();
+                        const file = item.getAsFile();
+                        await handleImageUpload('entry', file);
+                        document.getElementById('dropEntry').classList.remove('from-extension');
+                        document.getElementById('extensionBanner').style.display = 'none';
+                        return;
+                    }
+                }
             });
         }
 
