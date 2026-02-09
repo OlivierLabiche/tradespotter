@@ -27,7 +27,6 @@ body {
     line-height: 1.6;
 }
 
-/* Header */
 .header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
@@ -51,7 +50,6 @@ body {
 
 .header-actions { display: flex; gap: 0.5rem; align-items: center; }
 
-/* Buttons */
 .btn {
     font-family: 'JetBrains Mono', monospace;
     padding: 0.6rem 1.2rem;
@@ -73,14 +71,8 @@ body {
 .btn-danger { background: var(--accent-bear); color: white; }
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
 
-/* Main Container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 
-/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -100,7 +92,6 @@ body {
 .stat-value.neutral { color: var(--text-secondary); }
 .stat-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
 
-/* Cards */
 .card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -126,13 +117,7 @@ body {
 
 .card-content { padding: 1.5rem; }
 
-/* Filters */
-.filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
 
 .filter-btn {
     padding: 0.4rem 0.8rem;
@@ -147,13 +132,9 @@ body {
 .filter-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
 .filter-btn.active { background: var(--accent-bull); color: var(--bg-primary); border-color: var(--accent-bull); }
 
-/* Table */
 .table-container { overflow-x: auto; }
 
-.trades-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+.trades-table { width: 100%; border-collapse: collapse; }
 
 .trades-table th,
 .trades-table td {
@@ -174,7 +155,6 @@ body {
 .trades-table tr:hover { background: var(--bg-secondary); }
 .trades-table tr.encours { opacity: 0.8; }
 
-/* Badges */
 .badge {
     padding: 0.25rem 0.6rem;
     border-radius: 4px;
@@ -190,7 +170,6 @@ body {
 .badge.positif { background: rgba(255, 165, 2, 0.2); color: var(--accent-warning); }
 .badge.encours { background: rgba(139, 139, 154, 0.2); color: var(--text-secondary); }
 
-/* Forms */
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
 .form-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -218,7 +197,6 @@ body {
 
 .form-textarea { min-height: 100px; resize: vertical; }
 
-/* Direction Toggle */
 .direction-toggle { display: flex; gap: 0.5rem; }
 .direction-btn {
     flex: 1;
@@ -235,7 +213,6 @@ body {
 .direction-btn.long:hover, .direction-btn.long.active { border-color: var(--accent-bull); color: var(--accent-bull); background: rgba(0, 212, 170, 0.1); }
 .direction-btn.short:hover, .direction-btn.short.active { border-color: var(--accent-bear); color: var(--accent-bear); background: rgba(255, 71, 87, 0.1); }
 
-/* Mindset Toggle */
 .mindset-toggle { display: flex; gap: 0.5rem; }
 .mindset-btn {
     flex: 1;
@@ -252,7 +229,6 @@ body {
 .mindset-btn.active { border-color: var(--accent-bull); color: var(--accent-bull); background: rgba(0, 212, 170, 0.1); }
 .mindset-btn.intuitif.active { border-color: var(--accent-warning); color: var(--accent-warning); background: rgba(255, 165, 2, 0.1); }
 
-/* Result Buttons */
 .result-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .result-btn {
     padding: 0.75rem 1.25rem;
@@ -271,51 +247,6 @@ body {
 .result-btn.active.sl { border-color: var(--accent-bear); color: var(--accent-bear); background: rgba(255, 71, 87, 0.1); }
 .result-btn.active.positif { border-color: var(--accent-warning); color: var(--accent-warning); background: rgba(255, 165, 2, 0.1); }
 
-/* Checklist */
-.checklist-item {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-}
-
-.checklist-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-}
-
-.checklist-checkbox {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--border-color);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-    color: transparent;
-}
-.checklist-checkbox.checked {
-    background: var(--accent-bull);
-    border-color: var(--accent-bull);
-    color: var(--bg-primary);
-}
-
-.checklist-label { font-weight: 500; flex: 1; }
-
-.checklist-details {
-    display: none;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-.checklist-details.visible { display: block; }
-
-/* Option Buttons */
 .option-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
 .option-btn {
     padding: 0.4rem 0.8rem;
@@ -330,7 +261,6 @@ body {
 .option-btn:hover { border-color: var(--accent-bull); }
 .option-btn.active { background: var(--accent-bull); color: var(--bg-primary); border-color: var(--accent-bull); }
 
-/* Scoring */
 .scoring-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .scoring-row { display: flex; align-items: center; gap: 1rem; }
 .scoring-label { min-width: 80px; font-size: 0.85rem; color: var(--text-secondary); }
@@ -349,12 +279,11 @@ body {
     padding: 1rem;
     border-radius: var(--radius-sm);
     text-align: center;
-    grid-column: 1 / -1;
+    margin-top: 1rem;
 }
 .scoring-value { font-size: 2rem; font-weight: 700; color: var(--accent-bull); }
 .scoring-label-big { font-size: 0.85rem; color: var(--text-secondary); }
 
-/* Images */
 .images-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
 
 .image-field { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -409,14 +338,10 @@ body {
     font-size: 14px;
 }
 
-/* Modal */
 .modal-overlay {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.95);
     z-index: 1000;
     align-items: center;
@@ -427,8 +352,7 @@ body {
 .modal-image { max-width: 100%; max-height: 100%; border-radius: var(--radius); }
 .modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1rem; right: 1rem;
     background: none;
     border: none;
     color: white;
@@ -436,11 +360,9 @@ body {
     cursor: pointer;
 }
 
-/* Toast */
 .toast {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 2rem; right: 2rem;
     background: var(--bg-card);
     border: 1px solid var(--accent-bull);
     border-radius: var(--radius-sm);
@@ -458,7 +380,6 @@ body {
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Loading */
 .loading {
     display: flex;
     align-items: center;
@@ -467,8 +388,7 @@ body {
     color: var(--text-secondary);
 }
 .spinner {
-    width: 24px;
-    height: 24px;
+    width: 24px; height: 24px;
     border: 2px solid var(--border-color);
     border-top-color: var(--accent-bull);
     border-radius: 50%;
@@ -477,7 +397,6 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Empty State */
 .empty-state {
     text-align: center;
     padding: 3rem;
@@ -485,7 +404,6 @@ body {
 }
 .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
 
-/* Actions Bar */
 .actions-bar {
     display: flex;
     gap: 1rem;
@@ -495,7 +413,6 @@ body {
 }
 .actions-bar .btn-primary { flex: 1; padding: 1rem; font-size: 1rem; }
 
-/* Trade Header (detail page) */
 .trade-header {
     display: flex;
     align-items: center;
@@ -505,7 +422,6 @@ body {
 .trade-header .asset { font-size: 1.5rem; font-weight: 700; }
 .trade-header .meta { color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Responsive */
 @media (max-width: 768px) {
     .header { flex-direction: column; gap: 1rem; padding: 1rem; }
     .container { padding: 1rem; }
