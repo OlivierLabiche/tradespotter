@@ -92,174 +92,82 @@
             </div>
         </div>
 
-        <!-- Checklist ICT -->
+        <!-- Analyse -->
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">✅ Checklist ICT</h2>
+                <h2 class="card-title">⭐ Analyse</h2>
             </div>
             <div class="card-content">
                 <!-- Liquidation HTF -->
-                <div class="checklist-item">
-                    <div class="checklist-header" onclick="toggleChecklist('liqHTF')">
-                        <div class="checklist-checkbox" id="checkLiqHTF">✓</div>
-                        <span class="checklist-label">Liquidation HTF</span>
-                    </div>
-                    <div class="checklist-details" id="detailsLiqHTF">
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label">Type</label>
-                                <div class="option-group" data-field="liqHTFType">
-                                    <button class="option-btn" data-value="BSL">BSL</button>
-                                    <button class="option-btn" data-value="SSL">SSL</button>
-                                    <button class="option-btn" data-value="EQH">EQH</button>
-                                    <button class="option-btn" data-value="EQL">EQL</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Force</label>
-                                <div class="option-group" data-field="liqHTFForce">
-                                    <button class="option-btn" data-value="faible">Faible</button>
-                                    <button class="option-btn" data-value="forte">Forte</button>
-                                </div>
-                            </div>
+                <div class="analyse-item">
+                    <div class="analyse-header">
+                        <span class="analyse-label">Liquidation HTF</span>
+                        <div class="stars" data-score="liqHTF">
+                            <span class="star" onclick="setScore('liqHTF', 1)">☆</span>
+                            <span class="star" onclick="setScore('liqHTF', 2)">☆</span>
+                            <span class="star" onclick="setScore('liqHTF', 3)">☆</span>
+                            <span class="star" onclick="setScore('liqHTF', 4)">☆</span>
+                            <span class="star" onclick="setScore('liqHTF', 5)">☆</span>
                         </div>
                     </div>
+                    <input type="text" class="form-input" id="noteLiqHTF" placeholder="Notes (optionnel)...">
                 </div>
 
                 <!-- Liquidation LTF -->
-                <div class="checklist-item">
-                    <div class="checklist-header" onclick="toggleChecklist('liqLTF')">
-                        <div class="checklist-checkbox" id="checkLiqLTF">✓</div>
-                        <span class="checklist-label">Liquidation LTF</span>
-                    </div>
-                    <div class="checklist-details" id="detailsLiqLTF">
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label">Type</label>
-                                <div class="option-group" data-field="liqLTFType">
-                                    <button class="option-btn" data-value="BSL">BSL</button>
-                                    <button class="option-btn" data-value="SSL">SSL</button>
-                                    <button class="option-btn" data-value="EQH">EQH</button>
-                                    <button class="option-btn" data-value="EQL">EQL</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Force</label>
-                                <div class="option-group" data-field="liqLTFForce">
-                                    <button class="option-btn" data-value="faible">Faible</button>
-                                    <button class="option-btn" data-value="forte">Forte</button>
-                                </div>
-                            </div>
+                <div class="analyse-item">
+                    <div class="analyse-header">
+                        <span class="analyse-label">Liquidation LTF</span>
+                        <div class="stars" data-score="liqLTF">
+                            <span class="star" onclick="setScore('liqLTF', 1)">☆</span>
+                            <span class="star" onclick="setScore('liqLTF', 2)">☆</span>
+                            <span class="star" onclick="setScore('liqLTF', 3)">☆</span>
+                            <span class="star" onclick="setScore('liqLTF', 4)">☆</span>
+                            <span class="star" onclick="setScore('liqLTF', 5)">☆</span>
                         </div>
                     </div>
+                    <input type="text" class="form-input" id="noteLiqLTF" placeholder="Notes (optionnel)...">
                 </div>
 
                 <!-- BOS -->
-                <div class="checklist-item">
-                    <div class="checklist-header" onclick="toggleChecklist('bos')">
-                        <div class="checklist-checkbox" id="checkBOS">✓</div>
-                        <span class="checklist-label">BOS dans le sens HTF</span>
-                    </div>
-                    <div class="checklist-details" id="detailsBOS">
-                        <div class="form-grid-3">
-                            <div class="form-group">
-                                <label class="form-label">Pris avant clôture ?</label>
-                                <div class="option-group" data-field="bosAvantCloture">
-                                    <button class="option-btn" data-value="oui">Oui</button>
-                                    <button class="option-btn" data-value="non">Non</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Mèche ou Corps ?</label>
-                                <div class="option-group" data-field="bosMecheCorps">
-                                    <button class="option-btn" data-value="meche">Mèche</button>
-                                    <button class="option-btn" data-value="corps">Corps</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Prend une liquidité ?</label>
-                                <div class="option-group" data-field="bosLiquidite">
-                                    <button class="option-btn" data-value="non">Non</button>
-                                    <button class="option-btn" data-value="TR">TR</button>
-                                    <button class="option-btn" data-value="EQH">EQH</button>
-                                    <button class="option-btn" data-value="EQL">EQL</button>
-                                    <button class="option-btn" data-value="TL">TL</button>
-                                </div>
-                            </div>
+                <div class="analyse-item">
+                    <div class="analyse-header">
+                        <span class="analyse-label">BOS</span>
+                        <div class="stars" data-score="bos">
+                            <span class="star" onclick="setScore('bos', 1)">☆</span>
+                            <span class="star" onclick="setScore('bos', 2)">☆</span>
+                            <span class="star" onclick="setScore('bos', 3)">☆</span>
+                            <span class="star" onclick="setScore('bos', 4)">☆</span>
+                            <span class="star" onclick="setScore('bos', 5)">☆</span>
                         </div>
+                    </div>
+                    <div class="analyse-sub">
+                        <div class="toggle-buttons compact">
+                            <button type="button" class="toggle-btn" data-field="bosCassure" data-value="oui" onclick="setOption('bosCassure', 'oui')">Pris à la cassure</button>
+                            <button type="button" class="toggle-btn" data-field="bosCassure" data-value="non" onclick="setOption('bosCassure', 'non')">Après clôture</button>
+                        </div>
+                        <input type="text" class="form-input" id="noteBOS" placeholder="Notes (optionnel)...">
                     </div>
                 </div>
 
-                <!-- Objectif -->
-                <div class="checklist-item">
-                    <div class="checklist-header" onclick="toggleChecklist('objectif')">
-                        <div class="checklist-checkbox" id="checkObjectif">✓</div>
-                        <span class="checklist-label">Objectif de liquidité clair</span>
-                    </div>
-                    <div class="checklist-details" id="detailsObjectif">
-                        <div class="form-group">
-                            <label class="form-label">Type d'objectif</label>
-                            <div class="option-group" data-field="objectifType">
-                                <button class="option-btn" data-value="BSL">BSL</button>
-                                <button class="option-btn" data-value="SSL">SSL</button>
-                                <button class="option-btn" data-value="EQH">EQH</button>
-                                <button class="option-btn" data-value="EQL">EQL</button>
-                                <button class="option-btn" data-value="FVG">FVG</button>
-                                <button class="option-btn" data-value="OB">OB</button>
-                            </div>
+                <!-- Confluence de liquidité -->
+                <div class="analyse-item">
+                    <div class="analyse-header">
+                        <span class="analyse-label">Confluence de liquidité</span>
+                        <div class="stars" data-score="confluence">
+                            <span class="star" onclick="setScore('confluence', 1)">☆</span>
+                            <span class="star" onclick="setScore('confluence', 2)">☆</span>
+                            <span class="star" onclick="setScore('confluence', 3)">☆</span>
+                            <span class="star" onclick="setScore('confluence', 4)">☆</span>
+                            <span class="star" onclick="setScore('confluence', 5)">☆</span>
                         </div>
                     </div>
+                    <input type="text" class="form-input" id="noteConfluence" placeholder="Notes (optionnel)...">
                 </div>
 
-                <!-- Scoring -->
-                <div style="margin-top: 1.5rem;">
-                    <label class="form-label" style="margin-bottom: 1rem; display: block;">⭐ Scoring</label>
-                    <div class="scoring-grid">
-                        <div class="scoring-row">
-                            <span class="scoring-label">Liq HTF</span>
-                            <div class="stars" data-score="liqHTF">
-                                <span class="star" onclick="setScore('liqHTF', 1)">☆</span>
-                                <span class="star" onclick="setScore('liqHTF', 2)">☆</span>
-                                <span class="star" onclick="setScore('liqHTF', 3)">☆</span>
-                                <span class="star" onclick="setScore('liqHTF', 4)">☆</span>
-                                <span class="star" onclick="setScore('liqHTF', 5)">☆</span>
-                            </div>
-                        </div>
-                        <div class="scoring-row">
-                            <span class="scoring-label">Liq LTF</span>
-                            <div class="stars" data-score="liqLTF">
-                                <span class="star" onclick="setScore('liqLTF', 1)">☆</span>
-                                <span class="star" onclick="setScore('liqLTF', 2)">☆</span>
-                                <span class="star" onclick="setScore('liqLTF', 3)">☆</span>
-                                <span class="star" onclick="setScore('liqLTF', 4)">☆</span>
-                                <span class="star" onclick="setScore('liqLTF', 5)">☆</span>
-                            </div>
-                        </div>
-                        <div class="scoring-row">
-                            <span class="scoring-label">BOS</span>
-                            <div class="stars" data-score="bos">
-                                <span class="star" onclick="setScore('bos', 1)">☆</span>
-                                <span class="star" onclick="setScore('bos', 2)">☆</span>
-                                <span class="star" onclick="setScore('bos', 3)">☆</span>
-                                <span class="star" onclick="setScore('bos', 4)">☆</span>
-                                <span class="star" onclick="setScore('bos', 5)">☆</span>
-                            </div>
-                        </div>
-                        <div class="scoring-row">
-                            <span class="scoring-label">Objectif</span>
-                            <div class="stars" data-score="objectif">
-                                <span class="star" onclick="setScore('objectif', 1)">☆</span>
-                                <span class="star" onclick="setScore('objectif', 2)">☆</span>
-                                <span class="star" onclick="setScore('objectif', 3)">☆</span>
-                                <span class="star" onclick="setScore('objectif', 4)">☆</span>
-                                <span class="star" onclick="setScore('objectif', 5)">☆</span>
-                            </div>
-                        </div>
-                        <div class="scoring-total">
-                            <div class="scoring-value" id="scoreAvg">-</div>
-                            <div class="scoring-label-big">Moyenne</div>
-                        </div>
-                    </div>
+                <!-- Score moyen -->
+                <div class="scoring-total">
+                    <div class="scoring-value" id="scoreAvg">-</div>
+                    <div class="scoring-label-big">Moyenne</div>
                 </div>
             </div>
         </div>
@@ -270,10 +178,10 @@
                 <h2 class="card-title">📸 Screenshots</h2>
             </div>
             <div class="card-content">
-                <div class="images-grid">
-                    <!-- Entrée -->
+                <div class="images-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                    <!-- Prise de position -->
                     <div class="image-field">
-                        <label>Prise du trade (entrée)</label>
+                        <label>Prise de position</label>
                         <input type="text" class="form-input" id="imgEntryUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
                         <div class="image-drop-zone" id="dropEntry" tabindex="0">
                             <div class="icon">📷</div>
@@ -286,24 +194,9 @@
                         </div>
                     </div>
 
-                    <!-- Contexte -->
+                    <!-- Trade fini (HTF) -->
                     <div class="image-field">
-                        <label>Contexte HTF</label>
-                        <input type="text" class="form-input" id="imgContextUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
-                        <div class="image-drop-zone" id="dropContext" tabindex="0">
-                            <div class="icon">📷</div>
-                            <div class="text">Glisser une image ou Ctrl+V</div>
-                            <div class="hint">ou cliquer pour sélectionner</div>
-                        </div>
-                        <div class="image-preview-container" id="previewContextContainer">
-                            <img class="image-preview" id="previewContext" onclick="zoomImage(this.src)">
-                            <button class="btn-remove-image" onclick="removeImage('context')">✕</button>
-                        </div>
-                    </div>
-
-                    <!-- Sortie -->
-                    <div class="image-field">
-                        <label>Fin du trade</label>
+                        <label>Trade fini (vue HTF)</label>
                         <input type="text" class="form-input" id="imgExitUrl" placeholder="Lien TradingView ou URL image..." style="margin-bottom: 0.5rem;">
                         <div class="image-drop-zone" id="dropExit" tabindex="0">
                             <div class="icon">📷</div>
@@ -338,41 +231,15 @@
                         <label class="form-label">R obtenu</label>
                         <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Potentiel R</label>
+                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
                     <label class="form-label">Notes / Analyse</label>
                     <textarea class="form-textarea" id="notes" placeholder="Ce qui a bien/mal fonctionné..."></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- Analyse Finale (visible quand trade terminé) -->
-        <div class="card" id="analyseFinalCard" style="display:none">
-            <div class="card-header">
-                <h2 class="card-title">🔍 Analyse finale</h2>
-                <span class="badge-info">À remplir après clôture</span>
-            </div>
-            <div class="card-content">
-                <div class="form-grid-3">
-                    <div class="form-group">
-                        <label class="form-label">Potentiel du trade (R)</label>
-                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Le biais était bon ?</label>
-                        <div class="toggle-buttons">
-                            <button type="button" class="toggle-btn yes" data-field="biais" data-value="true" onclick="setAnalyse('biais', true)">✅ Oui</button>
-                            <button type="button" class="toggle-btn no" data-field="biais" data-value="false" onclick="setAnalyse('biais', false)">❌ Non</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Le POI était bon ?</label>
-                        <div class="toggle-buttons">
-                            <button type="button" class="toggle-btn yes" data-field="poi" data-value="true" onclick="setAnalyse('poi', true)">✅ Oui</button>
-                            <button type="button" class="toggle-btn no" data-field="poi" data-value="false" onclick="setAnalyse('poi', false)">❌ Non</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -407,14 +274,8 @@
             align-items: center;
             animation: bannerPulse 2s ease-in-out infinite;
         }
-        .extension-banner span:first-child {
-            font-weight: 600;
-            color: var(--accent-bull);
-        }
-        .extension-banner .hint {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
+        .extension-banner span:first-child { font-weight: 600; color: var(--accent-bull); }
+        .extension-banner .hint { color: var(--text-secondary); font-size: 0.85rem; }
         .extension-banner kbd {
             background: var(--bg-tertiary);
             padding: 0.2rem 0.5rem;
@@ -422,12 +283,8 @@
             font-size: 0.8rem;
             border: 1px solid var(--border-color);
         }
-        @keyframes bannerPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-        
-        /* Highlight pour drop zone quand vient de l'extension */
+        @keyframes bannerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
         .image-drop-zone.from-extension {
             border-color: var(--accent-bull);
             animation: dropZonePulse 1.5s ease-in-out infinite;
@@ -437,49 +294,39 @@
             50% { box-shadow: 0 0 0 8px rgba(0, 212, 170, 0); }
         }
 
-        /* Analyse finale section */
-        .badge-info {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+        /* Analyse items */
+        .analyse-item {
             background: var(--bg-secondary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
         }
-        
-        .toggle-buttons {
+        .analyse-header {
             display: flex;
-            gap: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
         }
-        
+        .analyse-label { font-weight: 600; font-size: 0.9rem; }
+        .analyse-sub { display: flex; flex-direction: column; gap: 0.5rem; }
+        .analyse-item .form-input { margin-top: 0.5rem; }
+
+        /* Toggle buttons compact */
+        .toggle-buttons { display: flex; gap: 0.5rem; }
+        .toggle-buttons.compact .toggle-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
         .toggle-btn {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
             background: transparent;
             color: var(--text-secondary);
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s;
         }
-        
-        .toggle-btn.yes:hover, .toggle-btn.yes.active {
-            border-color: var(--accent-bull);
-            color: var(--accent-bull);
-            background: rgba(0, 212, 170, 0.1);
-        }
-        
-        .toggle-btn.no:hover, .toggle-btn.no.active {
-            border-color: var(--accent-bear);
-            color: var(--accent-bear);
-            background: rgba(255, 71, 87, 0.1);
-        }
-
-        #analyseFinalCard {
-            border-color: var(--accent-info);
-            background: linear-gradient(135deg, var(--bg-card), rgba(52, 152, 219, 0.05));
-        }
+        .toggle-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .toggle-btn.active { background: var(--accent-bull); color: var(--bg-primary); border-color: var(--accent-bull); }
     </style>
 
     <!-- Scripts -->
@@ -496,11 +343,9 @@
             mindset: null,
             direction: null,
             status: 'encours',
-            checklist: { liqHTF: false, liqLTF: false, bos: false, objectif: false },
             options: {},
-            scores: { liqHTF: 0, liqLTF: 0, bos: 0, objectif: 0 },
-            images: { entry: null, context: null, exit: null },
-            analyse: { biais: null, poi: null }
+            scores: { liqHTF: 0, liqLTF: 0, bos: 0, confluence: 0 },
+            images: { entry: null, exit: null }
         };
 
         // Init
@@ -516,87 +361,46 @@
                 document.getElementById('btnSave').textContent = '💾 Mettre à jour';
             } else {
                 setDefaults();
-                
-                // Si on vient de l'extension, préremplir avec les paramètres URL
-                if (fromExtension) {
-                    prefillFromExtension(params);
-                }
+                if (fromExtension) prefillFromExtension(params);
             }
 
-            setupOptionButtons();
             setupImageInputs();
             setupDropZones();
         });
 
-        // Préremplir depuis les paramètres de l'extension
+        // Préremplir depuis l'extension
         function prefillFromExtension(params) {
-            // Afficher le banner
             document.getElementById('extensionBanner').style.display = 'flex';
             
-            // Asset
             const asset = params.get('asset');
-            if (asset) {
-                document.getElementById('asset').value = asset.toUpperCase();
-            }
+            if (asset) document.getElementById('asset').value = asset.toUpperCase();
             
-            // Direction
             const direction = params.get('direction');
-            if (direction) {
-                setDirection(direction);
-            }
+            if (direction) setDirection(direction);
             
-            // Mindset
             const mindset = params.get('mindset');
-            if (mindset) {
-                setMindset(mindset);
-            }
+            if (mindset) setMindset(mindset);
             
-            // Date et heure
             const date = params.get('date');
-            if (date) {
-                document.getElementById('tradeDate').value = date;
-            }
+            if (date) document.getElementById('tradeDate').value = date;
             
             const time = params.get('time');
-            if (time) {
-                document.getElementById('tradeTime').value = time;
-            }
+            if (time) document.getElementById('tradeTime').value = time;
             
-            // Timeframe (essayer de mapper vers LTF)
             const tf = params.get('tf');
             if (tf) {
-                const tfLower = tf.toLowerCase();
-                const tfSelect = document.getElementById('tfLTF');
-                // Mapper les timeframes TradingView vers nos options
-                const tfMap = {
-                    '1': 'M1', '1m': 'M1',
-                    '5': 'M5', '5m': 'M5',
-                    '15': 'M15', '15m': 'M15',
-                    '30': 'M30', '30m': 'M30',
-                    '60': 'H1', '1h': 'H1',
-                    '240': 'H4', '4h': 'H4',
-                    'd': 'D1', '1d': 'D1'
-                };
-                const mappedTf = tfMap[tfLower] || tfMap[tf];
-                if (mappedTf) {
-                    tfSelect.value = mappedTf;
-                }
+                const tfMap = { '1': 'M1', '1m': 'M1', '5': 'M5', '5m': 'M5', '15': 'M15', '15m': 'M15', '30': 'M30', '30m': 'M30', '60': 'H1', '1h': 'H1', '240': 'H4', '4h': 'H4', 'd': 'D1', '1d': 'D1' };
+                const mapped = tfMap[tf.toLowerCase()] || tfMap[tf];
+                if (mapped) document.getElementById('tfLTF').value = mapped;
             }
             
-            // Mettre en évidence la zone de drop pour l'image
             const dropEntry = document.getElementById('dropEntry');
             dropEntry.classList.add('from-extension');
             dropEntry.focus();
             
-            // Toast personnalisé selon le mindset
-            if (mindset === 'intuitif') {
-                showToast('🎲 Mode intuitif - Ctrl+V pour le screenshot');
-            } else {
-                showToast('📸 Ctrl+V pour coller le screenshot');
-            }
+            showToast(mindset === 'intuitif' ? '🎲 Mode intuitif - Ctrl+V pour le screenshot' : '📸 Ctrl+V pour coller le screenshot');
         }
 
-        // Set defaults for new trade
         function setDefaults() {
             const now = new Date();
             document.getElementById('tradeDate').value = now.toISOString().split('T')[0];
@@ -609,7 +413,6 @@
             try {
                 const trade = await getTrade(id);
                 
-                // Identification
                 document.getElementById('asset').value = trade.asset || '';
                 document.getElementById('tradeDate').value = trade.trade_date || '';
                 document.getElementById('tradeTime').value = trade.trade_time?.slice(0, 5) || '';
@@ -620,37 +423,23 @@
                 if (trade.mindset) setMindset(trade.mindset);
                 if (trade.direction) setDirection(trade.direction);
                 
-                // Checklist
-                if (trade.liq_htf) {
-                    toggleChecklist('liqHTF', true);
-                    if (trade.liq_htf_type) setOption('liqHTFType', trade.liq_htf_type);
-                    if (trade.liq_htf_force) setOption('liqHTFForce', trade.liq_htf_force);
-                }
-                if (trade.liq_ltf) {
-                    toggleChecklist('liqLTF', true);
-                    if (trade.liq_ltf_type) setOption('liqLTFType', trade.liq_ltf_type);
-                    if (trade.liq_ltf_force) setOption('liqLTFForce', trade.liq_ltf_force);
-                }
-                if (trade.bos) {
-                    toggleChecklist('bos', true);
-                    if (trade.bos_avant_cloture) setOption('bosAvantCloture', trade.bos_avant_cloture);
-                    if (trade.bos_meche_corps) setOption('bosMecheCorps', trade.bos_meche_corps);
-                    if (trade.bos_liquidite) setOption('bosLiquidite', trade.bos_liquidite);
-                }
-                if (trade.objectif) {
-                    toggleChecklist('objectif', true);
-                    if (trade.objectif_type) setOption('objectifType', trade.objectif_type);
-                }
-                
                 // Scores
                 if (trade.score_liq_htf) setScore('liqHTF', trade.score_liq_htf);
                 if (trade.score_liq_ltf) setScore('liqLTF', trade.score_liq_ltf);
                 if (trade.score_bos) setScore('bos', trade.score_bos);
-                if (trade.score_objectif) setScore('objectif', trade.score_objectif);
+                if (trade.score_confluence) setScore('confluence', trade.score_confluence);
+                
+                // Notes analyse
+                if (trade.note_liq_htf) document.getElementById('noteLiqHTF').value = trade.note_liq_htf;
+                if (trade.note_liq_ltf) document.getElementById('noteLiqLTF').value = trade.note_liq_ltf;
+                if (trade.note_bos) document.getElementById('noteBOS').value = trade.note_bos;
+                if (trade.note_confluence) document.getElementById('noteConfluence').value = trade.note_confluence;
+                
+                // BOS option
+                if (trade.bos_cassure) setOption('bosCassure', trade.bos_cassure);
                 
                 // Images
                 if (trade.img_entry) loadImagePreview('entry', trade.img_entry);
-                if (trade.img_context) loadImagePreview('context', trade.img_context);
                 if (trade.img_exit) loadImagePreview('exit', trade.img_exit);
                 
                 // Résultat
@@ -659,12 +448,7 @@
                 document.getElementById('rObtenu').value = trade.r_obtenu || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
-                // Analyse finale
-                if (trade.biais_ok !== null) setAnalyse('biais', trade.biais_ok);
-                if (trade.poi_ok !== null) setAnalyse('poi', trade.poi_ok);
-                
                 updateStatusBadge(trade.status);
-                
             } catch (error) {
                 console.error('Erreur chargement:', error);
                 showToast('❌ Erreur de chargement', true);
@@ -695,76 +479,21 @@
                 if (btn.classList.contains(value)) btn.classList.add('active');
             });
             updateStatusBadge(value);
-            
-            // Afficher/cacher la section Analyse finale
-            const analyseCard = document.getElementById('analyseFinalCard');
-            if (value && value !== 'encours') {
-                analyseCard.style.display = 'block';
-            } else {
-                analyseCard.style.display = 'none';
-            }
         }
 
         function updateStatusBadge(status) {
             const badge = document.getElementById('statusBadge');
-            const badges = {
-                'encours': '🔄 En cours',
-                'tp': '✅ TP',
-                'be': '⚖️ BE',
-                'sl': '❌ SL',
-                'positif': '💰 Positif'
-            };
+            const badges = { 'encours': '🔄 En cours', 'tp': '✅ TP', 'be': '⚖️ BE', 'sl': '❌ SL', 'positif': '💰 Positif' };
             badge.textContent = badges[status] || '';
             badge.className = `badge ${status}`;
         }
 
-        // Analyse finale
-        function setAnalyse(field, value) {
-            state.analyse[field] = value;
-            document.querySelectorAll(`.toggle-btn[data-field="${field}"]`).forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.value === String(value)) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        // Checklist
-        function toggleChecklist(id, forceOpen = false) {
-            if (forceOpen) {
-                state.checklist[id] = true;
-            } else {
-                state.checklist[id] = !state.checklist[id];
-            }
-            
-            const checkbox = document.getElementById(`check${id.charAt(0).toUpperCase() + id.slice(1)}`);
-            const details = document.getElementById(`details${id.charAt(0).toUpperCase() + id.slice(1)}`);
-            
-            checkbox.classList.toggle('checked', state.checklist[id]);
-            details.classList.toggle('visible', state.checklist[id]);
-        }
-
-        // Options
-        function setupOptionButtons() {
-            document.querySelectorAll('.option-group').forEach(group => {
-                group.querySelectorAll('.option-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        state.options[group.dataset.field] = btn.dataset.value;
-                    });
-                });
-            });
-        }
-
+        // Options (BOS cassure)
         function setOption(field, value) {
             state.options[field] = value;
-            const group = document.querySelector(`[data-field="${field}"]`);
-            if (group) {
-                group.querySelectorAll('.option-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.value === value);
-                });
-            }
+            document.querySelectorAll(`.toggle-btn[data-field="${field}"]`).forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === value);
+            });
         }
 
         // Scores
@@ -786,7 +515,7 @@
 
         // Images
         function setupImageInputs() {
-            ['Entry', 'Context', 'Exit'].forEach(type => {
+            ['Entry', 'Exit'].forEach(type => {
                 const input = document.getElementById(`img${type}Url`);
                 input.addEventListener('change', async () => {
                     const url = input.value.trim();
@@ -803,50 +532,33 @@
         }
 
         function setupDropZones() {
-            ['entry', 'context', 'exit'].forEach(type => {
+            ['entry', 'exit'].forEach(type => {
                 const dropZone = document.getElementById(`drop${type.charAt(0).toUpperCase() + type.slice(1)}`);
                 
-                // Drag & drop
-                dropZone.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    dropZone.classList.add('dragover');
-                });
-                
-                dropZone.addEventListener('dragleave', () => {
-                    dropZone.classList.remove('dragover');
-                });
+                dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+                dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
                 
                 dropZone.addEventListener('drop', async e => {
                     e.preventDefault();
                     dropZone.classList.remove('dragover');
                     const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        await handleImageUpload(type, file);
-                    }
+                    if (file && file.type.startsWith('image/')) await handleImageUpload(type, file);
                 });
                 
-                // Click to select
                 dropZone.addEventListener('click', () => {
                     const input = document.createElement('input');
                     input.type = 'file';
                     input.accept = 'image/*';
-                    input.onchange = async e => {
-                        if (e.target.files[0]) {
-                            await handleImageUpload(type, e.target.files[0]);
-                        }
-                    };
+                    input.onchange = async e => { if (e.target.files[0]) await handleImageUpload(type, e.target.files[0]); };
                     input.click();
                 });
                 
-                // Paste (Ctrl+V) - fonctionne même sans focus si c'est le premier champ
                 dropZone.addEventListener('paste', async e => {
                     const items = e.clipboardData.items;
                     for (const item of items) {
                         if (item.type.startsWith('image/')) {
                             e.preventDefault();
-                            const file = item.getAsFile();
-                            await handleImageUpload(type, file);
-                            // Enlever le highlight de l'extension
+                            await handleImageUpload(type, item.getAsFile());
                             dropZone.classList.remove('from-extension');
                             return;
                         }
@@ -854,17 +566,14 @@
                 });
             });
             
-            // Global paste handler pour coller dans entry par défaut si vient de l'extension
+            // Global paste for extension
             document.addEventListener('paste', async e => {
-                if (!fromExtension) return;
-                if (state.images.entry) return; // Déjà une image
-                
+                if (!fromExtension || state.images.entry) return;
                 const items = e.clipboardData.items;
                 for (const item of items) {
                     if (item.type.startsWith('image/')) {
                         e.preventDefault();
-                        const file = item.getAsFile();
-                        await handleImageUpload('entry', file);
+                        await handleImageUpload('entry', item.getAsFile());
                         document.getElementById('dropEntry').classList.remove('from-extension');
                         document.getElementById('extensionBanner').style.display = 'none';
                         return;
@@ -904,27 +613,17 @@
             document.getElementById(`img${Type}Url`).value = '';
         }
 
-        // Zoom image
         function zoomImage(src) {
             document.getElementById('modalImage').src = src;
             document.getElementById('imageModal').classList.add('visible');
         }
-
-        function closeModal() {
-            document.getElementById('imageModal').classList.remove('visible');
-        }
+        function closeModal() { document.getElementById('imageModal').classList.remove('visible'); }
 
         // Save
         async function handleSave() {
             const asset = document.getElementById('asset').value.toUpperCase().trim();
-            if (!asset) {
-                showToast('❌ Actif requis', true);
-                return;
-            }
-            if (!state.direction) {
-                showToast('❌ Direction requise', true);
-                return;
-            }
+            if (!asset) { showToast('❌ Actif requis', true); return; }
+            if (!state.direction) { showToast('❌ Direction requise', true); return; }
 
             const btnSave = document.getElementById('btnSave');
             btnSave.disabled = true;
@@ -938,7 +637,7 @@
                     : null;
 
                 const tradeData = {
-                    asset: asset,
+                    asset,
                     direction: state.direction,
                     trade_date: document.getElementById('tradeDate').value,
                     trade_time: document.getElementById('tradeTime').value,
@@ -947,39 +646,24 @@
                     mode: document.getElementById('mode').value,
                     mindset: state.mindset,
                     
-                    liq_htf: state.checklist.liqHTF,
-                    liq_htf_type: state.options.liqHTFType || null,
-                    liq_htf_force: state.options.liqHTFForce || null,
-                    
-                    liq_ltf: state.checklist.liqLTF,
-                    liq_ltf_type: state.options.liqLTFType || null,
-                    liq_ltf_force: state.options.liqLTFForce || null,
-                    
-                    bos: state.checklist.bos,
-                    bos_avant_cloture: state.options.bosAvantCloture || null,
-                    bos_meche_corps: state.options.bosMecheCorps || null,
-                    bos_liquidite: state.options.bosLiquidite || null,
-                    
-                    objectif: state.checklist.objectif,
-                    objectif_type: state.options.objectifType || null,
-                    
                     score_liq_htf: scores.liqHTF || null,
                     score_liq_ltf: scores.liqLTF || null,
                     score_bos: scores.bos || null,
-                    score_objectif: scores.objectif || null,
+                    score_confluence: scores.confluence || null,
                     score_avg: scoreAvg ? parseFloat(scoreAvg) : null,
+                    
+                    note_liq_htf: document.getElementById('noteLiqHTF').value || null,
+                    note_liq_ltf: document.getElementById('noteLiqLTF').value || null,
+                    note_bos: document.getElementById('noteBOS').value || null,
+                    note_confluence: document.getElementById('noteConfluence').value || null,
+                    bos_cassure: state.options.bosCassure || null,
                     
                     status: state.status,
                     potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
                     r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
                     notes_exit: document.getElementById('notes').value || null,
                     
-                    // Analyse finale
-                    biais_ok: state.analyse.biais,
-                    poi_ok: state.analyse.poi,
-                    
                     img_entry: state.images.entry || null,
-                    img_context: state.images.context || null,
                     img_exit: state.images.exit || null
                 };
 
@@ -988,7 +672,6 @@
                     tradeId = newTrade.id;
                     isNew = false;
                     showToast('✅ Trade créé !');
-                    // Redirect to edit mode
                     window.history.replaceState({}, '', `trade.html?id=${tradeId}`);
                     document.getElementById('btnDelete').style.display = 'block';
                 } else {
@@ -998,7 +681,6 @@
 
                 btnSave.textContent = '💾 Enregistrer';
                 btnSave.disabled = false;
-
             } catch (error) {
                 console.error('Erreur sauvegarde:', error);
                 showToast('❌ Erreur de sauvegarde', true);
@@ -1010,7 +692,6 @@
         // Delete
         async function handleDelete() {
             if (!confirm('Supprimer ce trade ?')) return;
-            
             try {
                 await deleteTrade(tradeId);
                 showToast('🗑️ Trade supprimé');
@@ -1032,10 +713,7 @@
         // Keyboard
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeModal();
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                handleSave();
-            }
+            if (e.ctrlKey && e.key === 's') { e.preventDefault(); handleSave(); }
         });
     </script>
 </body>
