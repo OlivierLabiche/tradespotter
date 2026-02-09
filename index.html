@@ -58,8 +58,6 @@
                     <button class="filter-btn" data-filter="incomplete">⚠️ Incomplets</button>
                     <button class="filter-btn" data-filter="tp">✅ TP</button>
                     <button class="filter-btn" data-filter="sl">❌ SL</button>
-                    <button class="filter-btn" data-filter="plan">🎯 Plan</button>
-                    <button class="filter-btn" data-filter="intuitif">🎲 Intuitif</button>
                 </div>
 
                 <div class="table-container">
@@ -69,7 +67,6 @@
                                 <th>Date</th>
                                 <th>Actif</th>
                                 <th>Dir</th>
-                                <th>État</th>
                                 <th>Résultat</th>
                                 <th>Complétion</th>
                                 <th>R</th>
@@ -79,7 +76,7 @@
                         </thead>
                         <tbody id="tradesBody">
                             <tr>
-                                <td colspan="9" class="loading">
+                                <td colspan="8" class="loading">
                                     <div class="spinner"></div>
                                     Chargement...
                                 </td>
@@ -149,7 +146,7 @@
             } catch (error) {
                 console.error('Erreur trades:', error);
                 document.getElementById('tradesBody').innerHTML = `
-                    <tr><td colspan="9" class="empty-state">
+                    <tr><td colspan="8" class="empty-state">
                         <div class="icon">⚠️</div>
                         Erreur de connexion à la base de données
                     </td></tr>
@@ -166,10 +163,6 @@
                 filtered = allTrades.filter(t => t.status === 'tp');
             } else if (currentFilter === 'sl') {
                 filtered = allTrades.filter(t => t.status === 'sl');
-            } else if (currentFilter === 'plan') {
-                filtered = allTrades.filter(t => t.mindset === 'plan');
-            } else if (currentFilter === 'intuitif') {
-                filtered = allTrades.filter(t => t.mindset === 'intuitif');
             } else if (currentFilter === 'incomplete') {
                 filtered = allTrades.filter(t => {
                     const completion = getCompletionStatus(t);
@@ -185,7 +178,7 @@
             
             if (trades.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="9" class="empty-state">
+                    <tr><td colspan="8" class="empty-state">
                         <div class="icon">📭</div>
                         Aucun trade
                     </td></tr>
@@ -200,7 +193,6 @@
                     <td>${formatDate(t.trade_date)}</td>
                     <td><strong>${t.asset}</strong></td>
                     <td><span class="badge ${t.direction}">${t.direction?.toUpperCase() || '-'}</span></td>
-                    <td>${t.mindset ? (t.mindset === 'plan' ? '🎯' : '🎲') : '-'}</td>
                     <td>${renderStatus(t.status)}</td>
                     <td>${renderCompletion(completion)}</td>
                     <td>${t.r_obtenu ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu + 'R' : '-'}</td>
