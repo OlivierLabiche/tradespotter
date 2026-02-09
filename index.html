@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Completion badges */
         .completion-badge {
             padding: 0.2rem 0.5rem;
             border-radius: 4px;
@@ -15,34 +14,16 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        .completion-badge.logged {
-            background: rgba(139, 139, 154, 0.2);
-            color: #8b8b9a;
-        }
-        .completion-badge.inprogress {
-            background: rgba(52, 152, 219, 0.2);
-            color: #3498db;
-        }
+        .completion-badge.logged { background: rgba(139, 139, 154, 0.2); color: #8b8b9a; }
+        .completion-badge.inprogress { background: rgba(52, 152, 219, 0.2); color: #3498db; }
         .completion-badge.incomplete {
             background: rgba(255, 165, 2, 0.2);
             color: #ffa502;
             animation: pulse-warning 2s infinite;
         }
-        .completion-badge.toanalyze {
-            background: rgba(155, 89, 182, 0.2);
-            color: #9b59b6;
-        }
-        .completion-badge.complete {
-            background: rgba(0, 212, 170, 0.2);
-            color: #00d4aa;
-        }
-        @keyframes pulse-warning {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        .needs-attention {
-            border-left: 3px solid #ffa502;
-        }
+        .completion-badge.complete { background: rgba(0, 212, 170, 0.2); color: #00d4aa; }
+        @keyframes pulse-warning { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .needs-attention { border-left: 3px solid #ffa502; }
     </style>
 </head>
 <body>
@@ -71,19 +52,16 @@
                 <h2 class="card-title">📊 Historique</h2>
             </div>
             <div class="card-content">
-                <!-- Filters -->
                 <div class="filters">
                     <button class="filter-btn active" data-filter="all">Tous</button>
                     <button class="filter-btn" data-filter="encours">🔄 En cours</button>
                     <button class="filter-btn" data-filter="incomplete">⚠️ Incomplets</button>
-                    <button class="filter-btn" data-filter="toanalyze">🔍 À analyser</button>
                     <button class="filter-btn" data-filter="tp">✅ TP</button>
                     <button class="filter-btn" data-filter="sl">❌ SL</button>
                     <button class="filter-btn" data-filter="plan">🎯 Plan</button>
                     <button class="filter-btn" data-filter="intuitif">🎲 Intuitif</button>
                 </div>
 
-                <!-- Table -->
                 <div class="table-container">
                     <table class="trades-table">
                         <thead>
@@ -113,12 +91,10 @@
         </div>
     </main>
 
-    <!-- Toast -->
     <div class="toast" id="toast">
         <span id="toastMessage"></span>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/trades.js"></script>
@@ -126,14 +102,12 @@
         let currentFilter = 'all';
         let allTrades = [];
 
-        // Init
         document.addEventListener('DOMContentLoaded', async () => {
             await loadStats();
             await loadTrades();
             setupFilters();
         });
 
-        // Load stats
         async function loadStats() {
             try {
                 const stats = await getStats();
@@ -151,7 +125,7 @@
                         <div class="stat-label">Wins</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value ${parseFloat(stats.totalR) < 0 ? 'negative' : ''}">${stats.losses}</div>
+                        <div class="stat-value">${stats.losses}</div>
                         <div class="stat-label">Losses</div>
                     </div>
                     <div class="stat-card">
@@ -168,7 +142,6 @@
             }
         }
 
-        // Load trades
         async function loadTrades() {
             try {
                 allTrades = await getTrades();
@@ -184,7 +157,6 @@
             }
         }
 
-        // Apply current filter
         function applyFilter() {
             let filtered = allTrades;
 
@@ -203,17 +175,11 @@
                     const completion = getCompletionStatus(t);
                     return completion.alert;
                 });
-            } else if (currentFilter === 'toanalyze') {
-                filtered = allTrades.filter(t => {
-                    const completion = getCompletionStatus(t);
-                    return completion.level === 4;
-                });
             }
 
             renderTrades(filtered);
         }
 
-        // Render trades table
         function renderTrades(trades) {
             const tbody = document.getElementById('tradesBody');
             
@@ -244,60 +210,39 @@
             `}).join('');
         }
 
-        // Déterminer le statut de complétion
+        // Statut de complétion simplifié
         function getCompletionStatus(trade) {
             const hasScores = trade.score_avg !== null;
             const isFinished = trade.status && trade.status !== 'encours';
             const hasResult = trade.r_obtenu !== null;
-            const hasPotentiel = trade.potentiel_r !== null;
-            const hasBiais = trade.biais_ok !== null;
-            const hasPoi = trade.poi_ok !== null;
-            const hasAnalyseFinale = hasPotentiel && hasBiais && hasPoi;
             
             if (!isFinished) {
-                // Trade en cours
                 if (!hasScores) {
                     return { level: 1, label: '📝 Loggé', alert: false };
-                } else {
-                    return { level: 2, label: '⏳ En cours', alert: false };
                 }
-            } else {
-                // Trade terminé
-                if (!hasResult) {
-                    // Pas encore de R obtenu - c'est normal, on attend
-                    return { level: 2, label: '⏳ R en attente', alert: false };
-                } else if (!hasScores) {
-                    // R obtenu mais pas de scoring = fiche incomplète
-                    return { level: 3, label: '⚠️ Incomplet', alert: true, missing: ['Scoring'] };
-                } else if (!hasAnalyseFinale) {
-                    // Scoring OK mais manque analyse finale
-                    const missing = [];
-                    if (!hasPotentiel) missing.push('Potentiel');
-                    if (!hasBiais) missing.push('Biais');
-                    if (!hasPoi) missing.push('POI');
-                    return { level: 4, label: '🔍 À analyser', alert: false, missing: missing };
-                } else {
-                    return { level: 5, label: '✅ Complet', alert: false };
-                }
+                return { level: 2, label: '⏳ En cours', alert: false };
             }
+            
+            // Trade terminé
+            if (!hasResult && !hasScores) {
+                return { level: 3, label: '⚠️ Incomplet', alert: true };
+            }
+            if (!hasResult) {
+                return { level: 2, label: '⏳ R en attente', alert: false };
+            }
+            if (!hasScores) {
+                return { level: 3, label: '⚠️ Incomplet', alert: true };
+            }
+            return { level: 5, label: '✅ Complet', alert: false };
         }
 
-        // Afficher le statut de complétion
         function renderCompletion(completion) {
-            if (completion.level === 1) {
-                return `<span class="completion-badge logged">${completion.label}</span>`;
-            } else if (completion.level === 2) {
-                return `<span class="completion-badge inprogress">${completion.label}</span>`;
-            } else if (completion.level === 3) {
-                return `<span class="completion-badge incomplete" title="Manque: ${completion.missing.join(', ')}">${completion.label}</span>`;
-            } else if (completion.level === 4) {
-                return `<span class="completion-badge toanalyze" title="Manque: ${completion.missing.join(', ')}">${completion.label}</span>`;
-            } else {
-                return `<span class="completion-badge complete">${completion.label}</span>`;
-            }
+            if (completion.level === 1) return `<span class="completion-badge logged">${completion.label}</span>`;
+            if (completion.level === 2) return `<span class="completion-badge inprogress">${completion.label}</span>`;
+            if (completion.level === 3) return `<span class="completion-badge incomplete">${completion.label}</span>`;
+            return `<span class="completion-badge complete">${completion.label}</span>`;
         }
 
-        // Render status badge
         function renderStatus(status) {
             const badges = {
                 'encours': '<span class="badge encours">🔄 En cours</span>',
@@ -309,14 +254,12 @@
             return badges[status] || '-';
         }
 
-        // Format date
         function formatDate(dateStr) {
             if (!dateStr) return '-';
             const d = new Date(dateStr);
             return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
         }
 
-        // Setup filters
         function setupFilters() {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
@@ -328,7 +271,6 @@
             });
         }
 
-        // Export JSON
         async function exportJSON() {
             try {
                 const trades = await getTrades();
@@ -346,7 +288,6 @@
             }
         }
 
-        // Toast
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             document.getElementById('toastMessage').textContent = message;
