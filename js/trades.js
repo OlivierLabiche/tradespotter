@@ -86,6 +86,7 @@ async function getStats() {
     const closed = trades.filter(t => t.status && t.status !== 'encours');
     const wins = closed.filter(t => t.status === 'tp' || t.status === 'positif');
     const losses = closed.filter(t => t.status === 'sl');
+    const be = closed.filter(t => t.status === 'be');
     const encours = trades.filter(t => t.status === 'encours');
 
     // Total R : r_obtenu explicite si renseigné, sinon SL = -1 par défaut, autres ignorés
@@ -104,6 +105,7 @@ async function getStats() {
         closed: closed.length,
         wins: wins.length,
         losses: losses.length,
+        be: be.length,
         encours: encours.length,
         totalR: totalR.toFixed(1),
         winRate: winRate.toFixed(0)

@@ -55,6 +55,7 @@
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Win Rate</div></div>
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Wins</div></div>
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Losses</div></div>
+            <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">BE</div></div>
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Total R</div></div>
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">En cours</div></div>
         </div>
@@ -144,6 +145,10 @@
                     <div class="stat-card">
                         <div class="stat-value">${stats.losses}</div>
                         <div class="stat-label">Losses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value neutral">${stats.be}</div>
+                        <div class="stat-label">BE</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value ${parseFloat(stats.totalR) < 0 ? 'negative' : ''}">${stats.totalR}R</div>
