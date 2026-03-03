@@ -76,53 +76,65 @@ function extractTradingViewData() {
     timeframe: '',
     timestamp: new Date().toISOString()
   };
-  
+
   // Extraire le symbole depuis le header ou le titre
-  // Méthode 1: Depuis le sélecteur de symbole
-  const symbolElement = document.querySelector('[data-symbol-short]');
-  if (symbolElement) {
-    data.asset = symbolElement.getAttribute('data-symbol-short') || symbolElement.textContent.trim();
+  // Méthode 1: Légende du graphique (sélecteur DOM actuel TradingView)
+  const legendTitle = document.querySelector('[data-name="legend-source-title"]');
+  if (legendTitle) {
+    const text = legendTitle.textContent.trim().replace(/[^A-Z0-9.:]/gi, '');
+    if (text) {
+      data.asset = text.split(':').pop();
+    }
   }
-  
-  // Méthode 2: Depuis le titre de la page
+
+  // Méthode 2: Depuis le sélecteur de symbole (attribut data-symbol-short)
+  if (!data.asset) {
+    const symbolElement = document.querySelector('[data-symbol-short]');
+    if (symbolElement) {
+      data.asset = symbolElement.getAttribute('data-symbol-short') || symbolElement.textContent.trim();
+    }
+  }
+
+  // Méthode 3: Depuis le titre de la page
   if (!data.asset) {
     const title = document.title;
-    const match = title.match(/^([A-Z0-9]+)/);
+    const match = title.match(/^([A-Z0-9]+)/i);
     if (match) {
       data.asset = match[1];
     }
   }
-  
-  // Méthode 3: Depuis l'URL
+
+  // Méthode 4: Depuis l'URL (query string, avec décodage du %3A)
   if (!data.asset) {
-    const urlMatch = window.location.pathname.match(/symbol=([A-Z0-9:]+)/i);
+    const urlMatch = window.location.href.match(/[?&]symbol=([^&]+)/i);
     if (urlMatch) {
-      data.asset = urlMatch[1].split(':').pop();
+      const decoded = decodeURIComponent(urlMatch[1]);
+      data.asset = decoded.split(':').pop().replace(/[^A-Z0-9.]/gi, '');
     }
   }
-  
-  // Méthode 4: Depuis le widget header
+
+  // Méthode 5: Depuis le widget header
   if (!data.asset) {
     const headerSymbol = document.querySelector('.chart-widget-header .symbol-info span, .tv-symbol-header__first-row span');
     if (headerSymbol) {
       data.asset = headerSymbol.textContent.trim().replace(/[^A-Z0-9]/gi, '');
     }
   }
-  
-  // Méthode 5: Data attribute sur le chart
+
+  // Méthode 6: Data attribute sur le chart
   if (!data.asset) {
     const chartContainer = document.querySelector('[data-symbol]');
     if (chartContainer) {
       data.asset = chartContainer.getAttribute('data-symbol');
     }
   }
-  
+
   // Extraire le timeframe
   const tfElement = document.querySelector('[data-value][data-role="button"]');
   if (tfElement) {
     data.timeframe = tfElement.getAttribute('data-value') || tfElement.textContent.trim();
   }
-  
+
   // Méthode alternative pour timeframe
   if (!data.timeframe) {
     const tfButton = document.querySelector('.chart-toolbar button[class*="interval"], .apply-common-tooltip[data-name="date-ranges-menu"]');
@@ -130,12 +142,12 @@ function extractTradingViewData() {
       data.timeframe = tfButton.textContent.trim();
     }
   }
-  
+
   // Nettoyer l'asset (enlever exchange prefix si présent)
   if (data.asset && data.asset.includes(':')) {
     data.asset = data.asset.split(':').pop();
   }
-  
+
   return data;
 }
 
