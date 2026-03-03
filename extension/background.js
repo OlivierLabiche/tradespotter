@@ -398,6 +398,78 @@ function getPopupCSS() {
       background: rgba(255, 165, 2, 0.3);
     }
     
+    /* Combobox Setup (étape 3) */
+    .tradespotter-popup .ts-combobox { position: relative; }
+    .tradespotter-popup .ts-setup-input {
+      width: 100%;
+      padding: 12px 38px 12px 14px;
+      background: #12121a;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      color: #e8e8ed;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      font-family: inherit;
+    }
+    .tradespotter-popup .ts-setup-input:focus { border-color: #00d4aa; }
+    .tradespotter-popup .ts-setup-input::placeholder { color: #5a5a6e; }
+    .tradespotter-popup .ts-combobox-toggle {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #5a5a6e;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      line-height: 1;
+    }
+    .tradespotter-popup .ts-combobox-toggle:hover { color: #8b8b9a; }
+    .tradespotter-popup .ts-combobox-list {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #12121a;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      z-index: 100;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .tradespotter-popup .ts-combobox-list.ts-open { display: block; }
+    .tradespotter-popup .ts-combobox-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #e8e8ed;
+    }
+    .tradespotter-popup .ts-combobox-item:hover { background: #1a1a25; }
+    .tradespotter-popup .ts-combobox-empty {
+      padding: 10px 14px;
+      color: #5a5a6e;
+      font-size: 12px;
+      font-style: italic;
+    }
+    .tradespotter-popup .ts-btn-open {
+      width: 100%;
+      padding: 14px 20px;
+      border: 2px solid #00d4aa;
+      border-radius: 10px;
+      background: rgba(0, 212, 170, 0.15);
+      color: #00d4aa;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 16px;
+    }
+    .tradespotter-popup .ts-btn-open:hover { background: rgba(0, 212, 170, 0.3); }
+
     /* Toast */
     .tradespotter-toast {
       position: fixed;
@@ -510,22 +582,116 @@ function showDirectionPopup(tvData, baseUrl) {
     
     overlay.querySelector('.ts-btn-plan').addEventListener('click', () => {
       selectedMindset = 'plan';
-      openTradeSpotter();
+      showStep3();
     });
-    
+
     overlay.querySelector('.ts-btn-intuitif').addEventListener('click', () => {
       selectedMindset = 'intuitif';
-      openTradeSpotter();
+      showStep3();
     });
     
     overlay.querySelector('.ts-btn-back').addEventListener('click', showStep1);
   }
   
-  function openTradeSpotter() {
+  // Étape 3: Choix du setup
+  function showStep3() {
+    const dirLabel = selectedDirection === 'long' ? '📈 LONG' : '📉 SHORT';
+    const dirClass = selectedDirection === 'long' ? 'ts-dir-long' : 'ts-dir-short';
+
+    // Récupérer les setups sauvegardés dans localStorage (domaine TradingView)
+    const savedSetups = JSON.parse(localStorage.getItem('ts_setups') || '[]');
+
+    overlay.innerHTML = `
+      <div class="tradespotter-popup">
+        <h2>◈ TradeSpotter</h2>
+        <div class="ts-asset">${asset} <span class="${dirClass}">${dirLabel}</span></div>
+        <div class="ts-step-label">Quel setup as-tu utilisé ?</div>
+        <div class="ts-combobox" id="tsSetupCombo">
+          <input type="text" class="ts-setup-input" id="tsSetupInput" placeholder="Ex: BOS + FVG, Liquidation sweep..." autocomplete="off">
+          <button type="button" class="ts-combobox-toggle" id="tsComboToggle">▾</button>
+          <div class="ts-combobox-list" id="tsSetupList"></div>
+        </div>
+        <button class="ts-btn-open" id="tsBtnOpen">Ouvrir TradeSpotter →</button>
+        <div class="ts-cancel">
+          <button class="ts-btn-back">← Retour</button>
+        </div>
+      </div>
+    `;
+
+    const input  = overlay.querySelector('#tsSetupInput');
+    const list   = overlay.querySelector('#tsSetupList');
+    const toggle = overlay.querySelector('#tsComboToggle');
+
+    function renderList(setups) {
+      if (!setups.length) {
+        list.innerHTML = '<div class="ts-combobox-empty">Aucun setup — tapez pour en créer un</div>';
+      } else {
+        list.innerHTML = setups.map(s => `<div class="ts-combobox-item">${s}</div>`).join('');
+      }
+    }
+
+    // Sélection d'un item
+    list.addEventListener('mousedown', (e) => {
+      const item = e.target.closest('.ts-combobox-item');
+      if (item) {
+        input.value = item.textContent;
+        list.classList.remove('ts-open');
+      }
+    });
+
+    // Bouton ▾ toggle
+    toggle.addEventListener('click', () => {
+      if (list.classList.contains('ts-open')) {
+        list.classList.remove('ts-open');
+      } else {
+        renderList(savedSetups);
+        list.classList.add('ts-open');
+        input.focus();
+      }
+    });
+
+    // Ouvre au focus
+    input.addEventListener('focus', () => {
+      const q = input.value.toLowerCase();
+      renderList(q ? savedSetups.filter(s => s.toLowerCase().includes(q)) : savedSetups);
+      list.classList.add('ts-open');
+    });
+
+    // Filtre en tapant
+    input.addEventListener('input', () => {
+      const q = input.value.toLowerCase();
+      renderList(q ? savedSetups.filter(s => s.toLowerCase().includes(q)) : savedSetups);
+      list.classList.add('ts-open');
+    });
+
+    // Ferme en cliquant ailleurs
+    document.addEventListener('click', function closeList(e) {
+      if (!overlay.querySelector('#tsSetupCombo').contains(e.target)) {
+        list.classList.remove('ts-open');
+        document.removeEventListener('click', closeList);
+      }
+    });
+
+    // Confirmer
+    overlay.querySelector('#tsBtnOpen').addEventListener('click', () => {
+      const setup = input.value.trim();
+      // Mémoriser le setup dans localStorage pour la prochaine fois
+      if (setup && !savedSetups.includes(setup)) {
+        savedSetups.push(setup);
+        savedSetups.sort();
+        localStorage.setItem('ts_setups', JSON.stringify(savedSetups));
+      }
+      openTradeSpotter(setup);
+    });
+
+    overlay.querySelector('.ts-btn-back').addEventListener('click', showStep2);
+  }
+
+  function openTradeSpotter(setup = null) {
     const now = new Date();
     const date = now.toISOString().split('T')[0];
     const time = now.toTimeString().slice(0, 5);
-    
+
     const params = new URLSearchParams({
       asset: asset,
       direction: selectedDirection,
@@ -535,7 +701,9 @@ function showDirectionPopup(tvData, baseUrl) {
       tf: timeframe,
       from: 'extension'
     });
-    
+
+    if (setup) params.set('setup', setup);
+
     const url = `${baseUrl}/trade.html?${params.toString()}`;
     window.open(url, '_blank');
     closePopup();

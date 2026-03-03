@@ -104,6 +104,18 @@ async function getStats() {
     };
 }
 
+// Récupérer les setups uniques
+async function getSetups() {
+    const { data, error } = await supabaseClient
+        .from('trades')
+        .select('setup')
+        .not('setup', 'is', null)
+        .neq('setup', '');
+
+    if (error) throw error;
+    return [...new Set(data.map(t => t.setup).filter(Boolean))].sort();
+}
+
 // Récupérer les assets uniques
 async function getAssets() {
     const { data, error } = await supabaseClient

@@ -82,6 +82,15 @@
                         <button type="button" class="direction-btn short" onclick="setDirection('short')">📉 SHORT</button>
                     </div>
                 </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Setup</label>
+                    <div class="combobox" id="setupCombobox">
+                        <input type="text" class="form-input" id="setup" placeholder="Ex: BOS + FVG, Liquidation sweep..." autocomplete="off">
+                        <button type="button" class="combobox-toggle" onclick="toggleSetupDropdown()">▾</button>
+                        <div class="combobox-list" id="setupList"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -305,6 +314,53 @@
         .analyse-sub { display: flex; flex-direction: column; gap: 0.5rem; }
         .analyse-item .form-input { margin-top: 0.5rem; }
 
+        /* Combobox Setup */
+        .combobox { position: relative; }
+        .combobox .form-input { padding-right: 2.5rem; cursor: pointer; }
+        .combobox-toggle {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 1rem;
+            padding: 0;
+            line-height: 1;
+        }
+        .combobox-toggle:hover { color: var(--text-primary); }
+        .combobox-list {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            z-index: 200;
+            max-height: 220px;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .combobox-list.open { display: block; }
+        .combobox-list-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: background 0.1s;
+        }
+        .combobox-list-item:hover { background: var(--bg-tertiary); }
+        .combobox-list-empty {
+            padding: 0.6rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
         /* Toggle buttons compact */
         .toggle-buttons { display: flex; gap: 0.5rem; }
         .toggle-buttons.compact .toggle-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
@@ -332,6 +388,7 @@
         let tradeId = null;
         let isNew = true;
         let fromExtension = false;
+        let allSetups = [];
         const state = {
             direction: null,
             status: 'encours',
@@ -358,6 +415,7 @@
 
             setupImageInputs();
             setupDropZones();
+            initSetups();
         });
 
         // Préremplir depuis l'extension
@@ -383,6 +441,9 @@
                 if (mapped) document.getElementById('tfLTF').value = mapped;
             }
             
+            const setup = params.get('setup');
+            if (setup) document.getElementById('setup').value = setup;
+
             const dropEntry = document.getElementById('dropEntry');
             dropEntry.classList.add('from-extension');
             dropEntry.focus();
@@ -410,6 +471,7 @@
                 document.getElementById('mode').value = trade.mode || 'live';
                 
                 if (trade.direction) setDirection(trade.direction);
+                if (trade.setup) document.getElementById('setup').value = trade.setup;
                 
                 // Scores
                 if (trade.score_liq_htf) setScore('liqHTF', trade.score_liq_htf);
@@ -630,6 +692,7 @@
                 const tradeData = {
                     asset,
                     direction: state.direction,
+                    setup: document.getElementById('setup').value.trim() || null,
                     trade_date: document.getElementById('tradeDate').value,
                     trade_time: document.getElementById('tradeTime').value,
                     tf_htf: document.getElementById('tfHTF').value || null,
@@ -688,6 +751,74 @@
                 setTimeout(() => window.location.href = 'index.html', 1000);
             } catch (error) {
                 showToast('❌ Erreur de suppression', true);
+            }
+        }
+
+        // Combobox Setup
+        async function initSetups() {
+            try {
+                allSetups = await getSetups();
+            } catch(e) {
+                console.error('Erreur chargement setups:', e);
+            }
+
+            const input = document.getElementById('setup');
+            const list  = document.getElementById('setupList');
+
+            function renderList(setups) {
+                if (!setups.length) {
+                    list.innerHTML = '<div class="combobox-list-empty">Aucun setup — tapez pour en créer un</div>';
+                } else {
+                    list.innerHTML = setups.map(s => `<div class="combobox-list-item">${s}</div>`).join('');
+                }
+            }
+
+            // Clic sur un item
+            list.addEventListener('mousedown', (e) => {
+                const item = e.target.closest('.combobox-list-item');
+                if (item) {
+                    input.value = item.textContent;
+                    list.classList.remove('open');
+                }
+            });
+
+            // Ouvre la liste complète au focus
+            input.addEventListener('focus', () => {
+                const q = input.value.toLowerCase();
+                renderList(q ? allSetups.filter(s => s.toLowerCase().includes(q)) : allSetups);
+                list.classList.add('open');
+            });
+
+            // Filtre en tapant
+            input.addEventListener('input', () => {
+                const q = input.value.toLowerCase();
+                renderList(q ? allSetups.filter(s => s.toLowerCase().includes(q)) : allSetups);
+                list.classList.add('open');
+            });
+
+            // Ferme en cliquant ailleurs
+            document.addEventListener('click', (e) => {
+                if (!document.getElementById('setupCombobox').contains(e.target)) {
+                    list.classList.remove('open');
+                }
+            });
+        }
+
+        function toggleSetupDropdown() {
+            const list  = document.getElementById('setupList');
+            const input = document.getElementById('setup');
+            if (list.classList.contains('open')) {
+                list.classList.remove('open');
+            } else {
+                // Rafraîchir la liste et ouvrir
+                const q = input.value.toLowerCase();
+                const items = q ? allSetups.filter(s => s.toLowerCase().includes(q)) : allSetups;
+                const html = items.length
+                    ? items.map(s => `<div class="combobox-list-item">${s}</div>`).join('')
+                    : '<div class="combobox-list-empty">Aucun setup — tapez pour en créer un</div>';
+                list.innerHTML = html;
+                list.classList.add('open');
+                input.focus();
             }
         }
 
