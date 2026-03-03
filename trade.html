@@ -501,10 +501,21 @@
                     const url = input.value.trim();
                     if (url) {
                         try {
-                            const imageUrl = await downloadTradingViewImage(url);
-                            loadImagePreview(type.toLowerCase(), imageUrl);
+                            showToast('📤 Upload en cours...');
+                            const id = tradeId || 'new_' + Date.now();
+                            // Upload réel vers Supabase via uploadFromTradingView
+                            const uploadedUrl = await uploadFromTradingView(url, id, type.toLowerCase());
+                            state.images[type.toLowerCase()] = uploadedUrl;
+                            loadImagePreview(type.toLowerCase(), uploadedUrl);
+                            showToast('✅ Image uploadée');
                         } catch (error) {
-                            showToast('❌ URL invalide', true);
+                            // Fallback : afficher l'URL directement si l'upload échoue (ex: CORS)
+                            try {
+                                const imageUrl = await downloadTradingViewImage(url);
+                                loadImagePreview(type.toLowerCase(), imageUrl);
+                            } catch (e) {
+                                showToast('❌ URL invalide', true);
+                            }
                         }
                     }
                 });

@@ -5,15 +5,17 @@ const BUCKET_NAME = 'screenshots';
 // Upload une image vers Supabase Storage
 async function uploadImage(file, tradeId, type) {
     // type = 'entry' | 'context' | 'exit'
-    const fileExt = file.name.split('.').pop() || 'png';
+    // Priorité au type MIME pour l'extension (plus fiable que file.name pour les images clipboard)
+    const mimeToExt = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' };
+    const fileExt = mimeToExt[file.type] || file.name.split('.').pop() || 'png';
     const fileName = `${tradeId}_${type}_${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
-    
+
     const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)
         .upload(filePath, file, {
             cacheControl: '3600',
-            upsert: false
+            upsert: true
         });
     
     if (error) throw error;
