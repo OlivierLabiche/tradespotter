@@ -78,20 +78,24 @@ async function getStats() {
     const { data: trades, error } = await supabaseClient
         .from('trades')
         .select('status, r_obtenu, mindset, is_complete');
-    
+
     if (error) throw error;
-    
-    const completed = trades.filter(t => t.is_complete);
-    const wins = completed.filter(t => t.status === 'tp' || t.status === 'positif');
-    const losses = completed.filter(t => t.status === 'sl');
+
+    // Trades clôturés = tous ceux avec un statut final (peu importe si R est renseigné)
+    const closed = trades.filter(t => t.status && t.status !== 'encours');
+    const wins = closed.filter(t => t.status === 'tp' || t.status === 'positif');
+    const losses = closed.filter(t => t.status === 'sl');
     const encours = trades.filter(t => t.status === 'encours');
-    
-    const totalR = completed.reduce((sum, t) => sum + (t.r_obtenu || 0), 0);
-    const winRate = completed.length > 0 ? (wins.length / completed.length * 100) : 0;
-    
+
+    // Total R = seulement les trades où r_obtenu est renseigné
+    const totalR = closed.reduce((sum, t) => sum + (t.r_obtenu || 0), 0);
+
+    // Win rate basé sur tous les trades clôturés (BE = neutre, ni win ni loss)
+    const winRate = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
+
     return {
         total: trades.length,
-        completed: completed.length,
+        closed: closed.length,
         wins: wins.length,
         losses: losses.length,
         encours: encours.length,
