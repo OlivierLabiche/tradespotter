@@ -95,8 +95,9 @@ async function getStats() {
         return sum;
     }, 0);
 
-    // Win rate basé sur tous les trades clôturés (BE = neutre, ni win ni loss)
-    const winRate = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
+    // Win rate sans les BE (neutre, ne compte ni comme win ni comme loss)
+    const closedNoBE = closed.filter(t => t.status !== 'be');
+    const winRate = closedNoBE.length > 0 ? (wins.length / closedNoBE.length * 100) : 0;
 
     return {
         total: trades.length,
