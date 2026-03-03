@@ -589,52 +589,53 @@
         }
 
         function setupDropZones() {
+            // Mémorise la dernière zone survolée pour savoir où coller avec Ctrl+V
+            let lastPasteTarget = 'entry';
+
             ['entry', 'exit'].forEach(type => {
                 const dropZone = document.getElementById(`drop${type.charAt(0).toUpperCase() + type.slice(1)}`);
-                
+
                 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
                 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
-                
+
                 dropZone.addEventListener('drop', async e => {
                     e.preventDefault();
                     dropZone.classList.remove('dragover');
                     const file = e.dataTransfer.files[0];
                     if (file && file.type.startsWith('image/')) await handleImageUpload(type, file);
                 });
-                
+
                 dropZone.addEventListener('click', () => {
+                    lastPasteTarget = type;
                     const input = document.createElement('input');
                     input.type = 'file';
                     input.accept = 'image/*';
                     input.onchange = async e => { if (e.target.files[0]) await handleImageUpload(type, e.target.files[0]); };
                     input.click();
                 });
-                
-                dropZone.addEventListener('paste', async e => {
-                    const items = e.clipboardData.items;
-                    for (const item of items) {
-                        if (item.type.startsWith('image/')) {
-                            e.preventDefault();
-                            await handleImageUpload(type, item.getAsFile());
-                            dropZone.classList.remove('from-extension');
-                            return;
-                        }
-                    }
-                });
+
+                // Surveiller le survol pour cibler le bon slot lors du Ctrl+V
+                dropZone.addEventListener('mouseenter', () => { lastPasteTarget = type; });
             });
-            
-            // Global paste for extension
+
+            // Handler global — fonctionne sans focus sur la zone
+            // Il suffit de survoler la zone cible avant de faire Ctrl+V
             document.addEventListener('paste', async e => {
-                if (!fromExtension || state.images.entry) return;
-                const items = e.clipboardData.items;
-                for (const item of items) {
-                    if (item.type.startsWith('image/')) {
-                        e.preventDefault();
-                        await handleImageUpload('entry', item.getAsFile());
-                        document.getElementById('dropEntry').classList.remove('from-extension');
-                        document.getElementById('extensionBanner').style.display = 'none';
-                        return;
-                    }
+                // Ne pas intercepter si l'utilisateur colle du texte dans un champ texte normal
+                const active = document.activeElement;
+                if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')
+                    && active.id !== 'imgEntryUrl' && active.id !== 'imgExitUrl') return;
+
+                const imageItem = [...e.clipboardData.items].find(item => item.type.startsWith('image/'));
+                if (!imageItem) return;
+
+                e.preventDefault();
+                await handleImageUpload(lastPasteTarget, imageItem.getAsFile());
+
+                const dropZone = document.getElementById(`drop${lastPasteTarget.charAt(0).toUpperCase() + lastPasteTarget.slice(1)}`);
+                if (dropZone) dropZone.classList.remove('from-extension');
+                if (fromExtension && lastPasteTarget === 'entry') {
+                    document.getElementById('extensionBanner').style.display = 'none';
                 }
             });
         }
