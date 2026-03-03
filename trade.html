@@ -478,7 +478,7 @@
                 if (trade.poi) setBonMauvais('poi', trade.poi);
                 if (trade.prise_position) setBonMauvais('prisePosition', trade.prise_position);
                 document.getElementById('potentielR').value = trade.potentiel_r || '';
-                document.getElementById('rObtenu').value = trade.r_obtenu || '';
+                document.getElementById('rObtenu').value = trade.r_obtenu !== null && trade.r_obtenu !== undefined ? trade.r_obtenu : '';
                 document.getElementById('sortiePartielle').value = trade.sortie_partielle || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
@@ -504,10 +504,14 @@
                 btn.classList.remove('active');
                 if (btn.classList.contains(value)) btn.classList.add('active');
             });
-            // Auto R = -1 pour SL si pas encore renseigné
+            // Auto R = -1 pour SL, 0 pour BE si pas encore renseigné
             if (value === 'sl') {
                 const rInput = document.getElementById('rObtenu');
                 if (!rInput.value) rInput.value = -1;
+            }
+            if (value === 'be') {
+                const rInput = document.getElementById('rObtenu');
+                if (!rInput.value) rInput.value = 0;
             }
             updateStatusBadge(value);
         }
@@ -680,7 +684,7 @@
                     poi: state.poi || null,
                     prise_position: state.prisePosition || null,
                     potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
-                    r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
+                    r_obtenu: (() => { const v = parseFloat(document.getElementById('rObtenu').value); return isNaN(v) ? null : v; })(),
                     sortie_partielle: document.getElementById('sortiePartielle').value.trim() || null,
                     notes_exit: document.getElementById('notes').value || null,
 

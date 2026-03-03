@@ -48,7 +48,8 @@ async function updateTrade(id, updates) {
         updates.direction &&
         updates.status &&
         updates.status !== 'encours' &&
-        updates.r_obtenu
+        updates.r_obtenu !== null &&
+        updates.r_obtenu !== undefined
     );
     
     const { data, error } = await supabaseClient
