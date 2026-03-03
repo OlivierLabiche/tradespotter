@@ -90,7 +90,7 @@
                                 <th>Résultat</th>
                                 <th>Mindset</th>
                                 <th>Complétion</th>
-                                <th>R</th>
+                                <th>RR</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -241,7 +241,7 @@
                     <td>${renderStatus(t.status)}</td>
                     <td>${renderMindset(t.mindset)}</td>
                     <td>${renderCompletion(completion)}</td>
-                    <td>${t.r_obtenu != null ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu + 'R' : '-'}</td>
+                    <td>${t.r_obtenu != null ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu : '-'}</td>
                     <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); window.location='trade.html?id=${t.id}'">✏️</button></td>
                 </tr>
             `}).join('');
