@@ -14,6 +14,19 @@
             font-weight: 600;
             white-space: nowrap;
         }
+        .date-filter-btn {
+            padding: 0.35rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .date-filter-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .date-filter-btn.active { background: var(--accent-info); color: #fff; border-color: var(--accent-info); }
         .completion-badge.logged { background: rgba(139, 139, 154, 0.2); color: #8b8b9a; }
         .completion-badge.inprogress { background: rgba(52, 152, 219, 0.2); color: #3498db; }
         .completion-badge.incomplete {
@@ -59,6 +72,12 @@
                     <button class="filter-btn" data-filter="tp">✅ TP</button>
                     <button class="filter-btn" data-filter="sl">❌ SL</button>
                 </div>
+                <div class="filters" style="margin-top: 0.5rem;">
+                    <button class="date-filter-btn active" data-period="all">📅 Tout</button>
+                    <button class="date-filter-btn" data-period="today">Aujourd'hui</button>
+                    <button class="date-filter-btn" data-period="week">Cette semaine</button>
+                    <button class="date-filter-btn" data-period="month">Ce mois</button>
+                </div>
 
                 <div class="table-container">
                     <table class="trades-table">
@@ -97,6 +116,7 @@
     <script src="js/trades.js"></script>
     <script>
         let currentFilter = 'all';
+        let currentDateFilter = 'all';
         let allTrades = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -154,20 +174,40 @@
             }
         }
 
+        function filterByDate(trades) {
+            if (currentDateFilter === 'all') return trades;
+            const now = new Date();
+
+            if (currentDateFilter === 'today') {
+                const today = now.toISOString().split('T')[0];
+                return trades.filter(t => t.trade_date === today);
+            }
+            if (currentDateFilter === 'week') {
+                const day = now.getDay(); // 0=dim, 1=lun...
+                const diff = day === 0 ? -6 : 1 - day; // ramène au lundi
+                const monday = new Date(now);
+                monday.setDate(now.getDate() + diff);
+                const startStr = monday.toISOString().split('T')[0];
+                return trades.filter(t => t.trade_date >= startStr);
+            }
+            if (currentDateFilter === 'month') {
+                const startOfMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+                return trades.filter(t => t.trade_date >= startOfMonth);
+            }
+            return trades;
+        }
+
         function applyFilter() {
-            let filtered = allTrades;
+            let filtered = filterByDate(allTrades);
 
             if (currentFilter === 'encours') {
-                filtered = allTrades.filter(t => t.status === 'encours');
+                filtered = filtered.filter(t => t.status === 'encours');
             } else if (currentFilter === 'tp') {
-                filtered = allTrades.filter(t => t.status === 'tp');
+                filtered = filtered.filter(t => t.status === 'tp');
             } else if (currentFilter === 'sl') {
-                filtered = allTrades.filter(t => t.status === 'sl');
+                filtered = filtered.filter(t => t.status === 'sl');
             } else if (currentFilter === 'incomplete') {
-                filtered = allTrades.filter(t => {
-                    const completion = getCompletionStatus(t);
-                    return completion.alert;
-                });
+                filtered = filtered.filter(t => getCompletionStatus(t).alert);
             }
 
             renderTrades(filtered);
@@ -243,11 +283,21 @@
         }
 
         function setupFilters() {
+            // Filtres statut
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', async () => {
+                btn.addEventListener('click', () => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentFilter = btn.dataset.filter;
+                    applyFilter();
+                });
+            });
+            // Filtres date
+            document.querySelectorAll('.date-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentDateFilter = btn.dataset.period;
                     applyFilter();
                 });
             });

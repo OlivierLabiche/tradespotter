@@ -504,6 +504,11 @@
                 btn.classList.remove('active');
                 if (btn.classList.contains(value)) btn.classList.add('active');
             });
+            // Auto R = -1 pour SL si pas encore renseigné
+            if (value === 'sl') {
+                const rInput = document.getElementById('rObtenu');
+                if (!rInput.value) rInput.value = -1;
+            }
             updateStatusBadge(value);
         }
 
