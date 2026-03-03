@@ -378,44 +378,20 @@ function getPopupCSS() {
       font-weight: 500;
       margin-bottom: 20px;
     }
-    .tradespotter-popup .ts-cooldown-timer {
-      margin-bottom: 20px;
-    }
-    .tradespotter-popup .ts-timer-circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 4px solid #ffa502;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      animation: tsPulse 1s ease-in-out infinite;
-    }
-    @keyframes tsPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
-    }
-    .tradespotter-popup .ts-timer-number {
-      font-size: 36px;
-      font-weight: 700;
-      color: #ffa502;
-    }
     .tradespotter-popup .ts-btn-confirm {
       width: 100%;
       padding: 14px 20px;
-      border: 2px solid #3a3a4a;
+      border: 2px solid #ffa502;
       border-radius: 10px;
-      background: #2a2a3a;
-      color: #5a5a6e;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: not-allowed;
-      transition: all 0.3s;
-    }
-    .tradespotter-popup .ts-btn-confirm.ts-btn-ready {
-      border-color: #ffa502;
       background: rgba(255, 165, 2, 0.2);
       color: #ffa502;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .tradespotter-popup .ts-btn-confirm:hover {
+      background: rgba(255, 165, 2, 0.3);
       cursor: pointer;
     }
     .tradespotter-popup .ts-btn-confirm.ts-btn-ready:hover {
@@ -539,70 +515,10 @@ function showDirectionPopup(tvData, baseUrl) {
     
     overlay.querySelector('.ts-btn-intuitif').addEventListener('click', () => {
       selectedMindset = 'intuitif';
-      showCooldown();
+      openTradeSpotter();
     });
     
     overlay.querySelector('.ts-btn-back').addEventListener('click', showStep1);
-  }
-  
-  // Étape 3: Cooldown de 5 secondes pour mode intuitif
-  function showCooldown() {
-    let countdown = 5;
-    
-    overlay.innerHTML = `
-      <div class="tradespotter-popup">
-        <h2>◈ TradeSpotter</h2>
-        <div class="ts-asset">${asset}</div>
-        <div class="ts-cooldown">
-          <div class="ts-cooldown-icon">🎲</div>
-          <div class="ts-cooldown-title">Mode Intuitif</div>
-          <div class="ts-cooldown-text">
-            Tu es sur le point de prendre un trade<br>
-            <strong>hors de ton plan</strong>.
-          </div>
-          <div class="ts-cooldown-question">Es-tu vraiment sûr de toi ?</div>
-          <div class="ts-cooldown-timer">
-            <div class="ts-timer-circle">
-              <span class="ts-timer-number" id="tsCountdown">${countdown}</span>
-            </div>
-          </div>
-          <button class="ts-btn ts-btn-confirm" id="tsConfirmBtn" disabled>
-            ⏳ Patiente ${countdown}s...
-          </button>
-        </div>
-        <div class="ts-cancel">
-          <button class="ts-btn-back">← J'ai changé d'avis</button>
-        </div>
-      </div>
-    `;
-    
-    const countdownEl = document.getElementById('tsCountdown');
-    const confirmBtn = document.getElementById('tsConfirmBtn');
-    
-    const timer = setInterval(() => {
-      countdown--;
-      countdownEl.textContent = countdown;
-      confirmBtn.textContent = `⏳ Patiente ${countdown}s...`;
-      
-      if (countdown <= 0) {
-        clearInterval(timer);
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = '🎲 Je confirme mon trade intuitif';
-        confirmBtn.classList.add('ts-btn-ready');
-      }
-    }, 1000);
-    
-    confirmBtn.addEventListener('click', () => {
-      if (!confirmBtn.disabled) {
-        clearInterval(timer);
-        openTradeSpotter();
-      }
-    });
-    
-    overlay.querySelector('.ts-btn-back').addEventListener('click', () => {
-      clearInterval(timer);
-      showStep2();
-    });
   }
   
   function openTradeSpotter() {
