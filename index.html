@@ -68,9 +68,9 @@
                                 <th>Actif</th>
                                 <th>Dir</th>
                                 <th>Résultat</th>
+                                <th>Mindset</th>
                                 <th>Complétion</th>
                                 <th>R</th>
-                                <th>Score</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -194,38 +194,28 @@
                     <td><strong>${t.asset}</strong></td>
                     <td><span class="badge ${t.direction}">${t.direction?.toUpperCase() || '-'}</span></td>
                     <td>${renderStatus(t.status)}</td>
+                    <td>${renderMindset(t.mindset)}</td>
                     <td>${renderCompletion(completion)}</td>
-                    <td>${t.r_obtenu ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu + 'R' : '-'}</td>
-                    <td>${t.score_avg || '-'}</td>
+                    <td>${t.r_obtenu != null ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu + 'R' : '-'}</td>
                     <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); window.location='trade.html?id=${t.id}'">✏️</button></td>
                 </tr>
             `}).join('');
         }
 
-        // Statut de complétion simplifié
+        // Statut de complétion
         function getCompletionStatus(trade) {
-            const hasScores = trade.score_avg !== null;
             const isFinished = trade.status && trade.status !== 'encours';
-            const hasResult = trade.r_obtenu !== null;
-            
-            if (!isFinished) {
-                if (!hasScores) {
-                    return { level: 1, label: '📝 Loggé', alert: false };
-                }
-                return { level: 2, label: '⏳ En cours', alert: false };
-            }
-            
-            // Trade terminé
-            if (!hasResult && !hasScores) {
-                return { level: 3, label: '⚠️ Incomplet', alert: true };
-            }
-            if (!hasResult) {
-                return { level: 2, label: '⏳ R en attente', alert: false };
-            }
-            if (!hasScores) {
-                return { level: 3, label: '⚠️ Incomplet', alert: true };
-            }
+            const hasResult = trade.r_obtenu !== null && trade.r_obtenu !== undefined;
+
+            if (!isFinished) return { level: 1, label: '⏳ En cours', alert: false };
+            if (!hasResult)  return { level: 3, label: '⚠️ Incomplet', alert: true };
             return { level: 5, label: '✅ Complet', alert: false };
+        }
+
+        function renderMindset(mindset) {
+            if (mindset === 'plan')     return '<span class="badge" style="background:rgba(0,184,148,0.15);color:#00b894">🎯 Plan</span>';
+            if (mindset === 'intuitif') return '<span class="badge" style="background:rgba(230,126,34,0.15);color:#e67e22">🎲 Intuitif</span>';
+            return '<span style="color:var(--text-muted)">-</span>';
         }
 
         function renderCompletion(completion) {

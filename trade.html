@@ -95,85 +95,13 @@
                         <div class="combobox-list" id="setupList"></div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Analyse -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">⭐ Analyse</h2>
-            </div>
-            <div class="card-content">
-                <!-- Liquidation HTF -->
-                <div class="analyse-item">
-                    <div class="analyse-header">
-                        <span class="analyse-label">Liquidation HTF</span>
-                        <div class="stars" data-score="liqHTF">
-                            <span class="star" onclick="setScore('liqHTF', 1)">☆</span>
-                            <span class="star" onclick="setScore('liqHTF', 2)">☆</span>
-                            <span class="star" onclick="setScore('liqHTF', 3)">☆</span>
-                            <span class="star" onclick="setScore('liqHTF', 4)">☆</span>
-                            <span class="star" onclick="setScore('liqHTF', 5)">☆</span>
-                        </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Mindset</label>
+                    <div class="direction-toggle">
+                        <button type="button" class="mindset-btn plan" onclick="setMindset('plan')">🎯 Plan</button>
+                        <button type="button" class="mindset-btn intuitif" onclick="setMindset('intuitif')">🎲 Intuitif</button>
                     </div>
-                    <input type="text" class="form-input" id="noteLiqHTF" placeholder="Notes (optionnel)...">
-                </div>
-
-                <!-- Liquidation LTF -->
-                <div class="analyse-item">
-                    <div class="analyse-header">
-                        <span class="analyse-label">Liquidation LTF</span>
-                        <div class="stars" data-score="liqLTF">
-                            <span class="star" onclick="setScore('liqLTF', 1)">☆</span>
-                            <span class="star" onclick="setScore('liqLTF', 2)">☆</span>
-                            <span class="star" onclick="setScore('liqLTF', 3)">☆</span>
-                            <span class="star" onclick="setScore('liqLTF', 4)">☆</span>
-                            <span class="star" onclick="setScore('liqLTF', 5)">☆</span>
-                        </div>
-                    </div>
-                    <input type="text" class="form-input" id="noteLiqLTF" placeholder="Notes (optionnel)...">
-                </div>
-
-                <!-- BOS -->
-                <div class="analyse-item">
-                    <div class="analyse-header">
-                        <span class="analyse-label">BOS</span>
-                        <div class="stars" data-score="bos">
-                            <span class="star" onclick="setScore('bos', 1)">☆</span>
-                            <span class="star" onclick="setScore('bos', 2)">☆</span>
-                            <span class="star" onclick="setScore('bos', 3)">☆</span>
-                            <span class="star" onclick="setScore('bos', 4)">☆</span>
-                            <span class="star" onclick="setScore('bos', 5)">☆</span>
-                        </div>
-                    </div>
-                    <div class="analyse-sub">
-                        <div class="toggle-buttons compact">
-                            <button type="button" class="toggle-btn" data-field="bosCassure" data-value="oui" onclick="setOption('bosCassure', 'oui')">Pris à la cassure</button>
-                            <button type="button" class="toggle-btn" data-field="bosCassure" data-value="non" onclick="setOption('bosCassure', 'non')">Après clôture</button>
-                        </div>
-                        <input type="text" class="form-input" id="noteBOS" placeholder="Notes (optionnel)...">
-                    </div>
-                </div>
-
-                <!-- Confluence de liquidité -->
-                <div class="analyse-item">
-                    <div class="analyse-header">
-                        <span class="analyse-label">Confluence de liquidité</span>
-                        <div class="stars" data-score="confluence">
-                            <span class="star" onclick="setScore('confluence', 1)">☆</span>
-                            <span class="star" onclick="setScore('confluence', 2)">☆</span>
-                            <span class="star" onclick="setScore('confluence', 3)">☆</span>
-                            <span class="star" onclick="setScore('confluence', 4)">☆</span>
-                            <span class="star" onclick="setScore('confluence', 5)">☆</span>
-                        </div>
-                    </div>
-                    <input type="text" class="form-input" id="noteConfluence" placeholder="Notes (optionnel)...">
-                </div>
-
-                <!-- Score moyen -->
-                <div class="scoring-total">
-                    <div class="scoring-value" id="scoreAvg">-</div>
-                    <div class="scoring-label-big">Moyenne</div>
                 </div>
             </div>
         </div>
@@ -232,6 +160,37 @@
                     <button class="result-btn positif" onclick="setStatus('positif')">💰 Positif</button>
                 </div>
 
+                <!-- Analyse qualitative -->
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div class="analyse-item">
+                        <div class="analyse-header">
+                            <span class="analyse-label">Biais</span>
+                            <div class="toggle-buttons compact">
+                                <button type="button" class="toggle-btn bon-btn" data-field="biais" data-value="bon" onclick="setBonMauvais('biais', 'bon')">✅ Bon</button>
+                                <button type="button" class="toggle-btn mauvais-btn" data-field="biais" data-value="mauvais" onclick="setBonMauvais('biais', 'mauvais')">❌ Mauvais</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analyse-item">
+                        <div class="analyse-header">
+                            <span class="analyse-label">POI</span>
+                            <div class="toggle-buttons compact">
+                                <button type="button" class="toggle-btn bon-btn" data-field="poi" data-value="bon" onclick="setBonMauvais('poi', 'bon')">✅ Bon</button>
+                                <button type="button" class="toggle-btn mauvais-btn" data-field="poi" data-value="mauvais" onclick="setBonMauvais('poi', 'mauvais')">❌ Mauvais</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analyse-item">
+                        <div class="analyse-header">
+                            <span class="analyse-label">Prise de position</span>
+                            <div class="toggle-buttons compact">
+                                <button type="button" class="toggle-btn bon-btn" data-field="prisePosition" data-value="bon" onclick="setBonMauvais('prisePosition', 'bon')">✅ Bon</button>
+                                <button type="button" class="toggle-btn mauvais-btn" data-field="prisePosition" data-value="mauvais" onclick="setBonMauvais('prisePosition', 'mauvais')">❌ Mauvais</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-grid-2" style="margin-top: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">R obtenu</label>
@@ -241,6 +200,11 @@
                         <label class="form-label">Potentiel R</label>
                         <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
                     </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Sortie partielle ?</label>
+                    <textarea class="form-textarea" id="sortiePartielle" placeholder="Ex: sorti 50% à +2R, laissé courir..."></textarea>
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
@@ -365,6 +329,27 @@
             font-style: italic;
         }
 
+        /* Mindset buttons */
+        .mindset-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mindset-btn.plan.active  { background: rgba(0,184,148,0.15); color: var(--accent-bull); border-color: var(--accent-bull); }
+        .mindset-btn.intuitif.active { background: rgba(230,126,34,0.15); color: var(--accent-warning); border-color: var(--accent-warning); }
+        .mindset-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+        /* Bon / Mauvais */
+        .toggle-btn.bon-btn.active    { background: var(--accent-bull);  color: #fff; border-color: var(--accent-bull); }
+        .toggle-btn.mauvais-btn.active { background: var(--accent-bear); color: #fff; border-color: var(--accent-bear); }
+
         /* Toggle buttons compact */
         .toggle-buttons { display: flex; gap: 0.5rem; }
         .toggle-buttons.compact .toggle-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
@@ -396,8 +381,10 @@
         const state = {
             direction: null,
             status: 'encours',
-            options: {},
-            scores: { liqHTF: 0, liqLTF: 0, bos: 0, confluence: 0 },
+            mindset: null,
+            biais: null,
+            poi: null,
+            prisePosition: null,
             images: { entry: null, exit: null }
         };
 
@@ -431,6 +418,9 @@
             
             const direction = params.get('direction');
             if (direction) setDirection(direction);
+
+            const mindset = params.get('mindset');
+            if (mindset) setMindset(mindset);
             
             const date = params.get('date');
             if (date) document.getElementById('tradeDate').value = date;
@@ -476,30 +466,20 @@
                 
                 if (trade.direction) setDirection(trade.direction);
                 if (trade.setup) document.getElementById('setup').value = trade.setup;
-                
-                // Scores
-                if (trade.score_liq_htf) setScore('liqHTF', trade.score_liq_htf);
-                if (trade.score_liq_ltf) setScore('liqLTF', trade.score_liq_ltf);
-                if (trade.score_bos) setScore('bos', trade.score_bos);
-                if (trade.score_confluence) setScore('confluence', trade.score_confluence);
-                
-                // Notes analyse
-                if (trade.note_liq_htf) document.getElementById('noteLiqHTF').value = trade.note_liq_htf;
-                if (trade.note_liq_ltf) document.getElementById('noteLiqLTF').value = trade.note_liq_ltf;
-                if (trade.note_bos) document.getElementById('noteBOS').value = trade.note_bos;
-                if (trade.note_confluence) document.getElementById('noteConfluence').value = trade.note_confluence;
-                
-                // BOS option
-                if (trade.bos_cassure) setOption('bosCassure', trade.bos_cassure);
-                
+                if (trade.mindset) setMindset(trade.mindset);
+
                 // Images
                 if (trade.img_entry) loadImagePreview('entry', trade.img_entry);
                 if (trade.img_exit) loadImagePreview('exit', trade.img_exit);
-                
+
                 // Résultat
                 if (trade.status) setStatus(trade.status);
+                if (trade.biais) setBonMauvais('biais', trade.biais);
+                if (trade.poi) setBonMauvais('poi', trade.poi);
+                if (trade.prise_position) setBonMauvais('prisePosition', trade.prise_position);
                 document.getElementById('potentielR').value = trade.potentiel_r || '';
                 document.getElementById('rObtenu').value = trade.r_obtenu || '';
+                document.getElementById('sortiePartielle').value = trade.sortie_partielle || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
                 updateStatusBadge(trade.status);
@@ -534,29 +514,20 @@
             badge.className = `badge ${status}`;
         }
 
-        // Options (BOS cassure)
-        function setOption(field, value) {
-            state.options[field] = value;
+        // Mindset
+        function setMindset(value) {
+            state.mindset = value;
+            document.querySelectorAll('.mindset-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.classList.contains(value));
+            });
+        }
+
+        // Biais / POI / Prise de position
+        function setBonMauvais(field, value) {
+            state[field] = value;
             document.querySelectorAll(`.toggle-btn[data-field="${field}"]`).forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.value === value);
             });
-        }
-
-        // Scores
-        function setScore(key, value) {
-            state.scores[key] = value;
-            const container = document.querySelector(`[data-score="${key}"]`);
-            container.querySelectorAll('.star').forEach((star, i) => {
-                star.classList.toggle('active', i < value);
-                star.textContent = i < value ? '★' : '☆';
-            });
-            updateScoreAvg();
-        }
-
-        function updateScoreAvg() {
-            const scores = Object.values(state.scores).filter(s => s > 0);
-            const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '-';
-            document.getElementById('scoreAvg').textContent = avg;
         }
 
         // Images
@@ -688,39 +659,26 @@
             btnSave.textContent = '⏳ Sauvegarde...';
 
             try {
-                const scores = state.scores;
-                const activeScores = Object.values(scores).filter(s => s > 0);
-                const scoreAvg = activeScores.length > 0 
-                    ? (activeScores.reduce((a, b) => a + b, 0) / activeScores.length).toFixed(1) 
-                    : null;
-
                 const tradeData = {
                     asset,
                     direction: state.direction,
                     setup: document.getElementById('setup').value.trim() || null,
+                    mindset: state.mindset || null,
                     trade_date: document.getElementById('tradeDate').value,
                     trade_time: document.getElementById('tradeTime').value,
                     tf_htf: document.getElementById('tfHTF').value || null,
                     tf_ltf: document.getElementById('tfLTF').value || null,
                     mode: document.getElementById('mode').value,
-                    
-                    score_liq_htf: scores.liqHTF || null,
-                    score_liq_ltf: scores.liqLTF || null,
-                    score_bos: scores.bos || null,
-                    score_confluence: scores.confluence || null,
-                    score_avg: scoreAvg ? parseFloat(scoreAvg) : null,
-                    
-                    note_liq_htf: document.getElementById('noteLiqHTF').value || null,
-                    note_liq_ltf: document.getElementById('noteLiqLTF').value || null,
-                    note_bos: document.getElementById('noteBOS').value || null,
-                    note_confluence: document.getElementById('noteConfluence').value || null,
-                    bos_cassure: state.options.bosCassure || null,
-                    
+
                     status: state.status,
+                    biais: state.biais || null,
+                    poi: state.poi || null,
+                    prise_position: state.prisePosition || null,
                     potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
                     r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
+                    sortie_partielle: document.getElementById('sortiePartielle').value.trim() || null,
                     notes_exit: document.getElementById('notes').value || null,
-                    
+
                     img_entry: state.images.entry || null,
                     img_exit: state.images.exit || null
                 };
