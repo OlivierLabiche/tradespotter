@@ -12,17 +12,36 @@ function getChartData() {
   };
   
   // === EXTRACTION DU SYMBOLE ===
-  
-  // Méthode 1: Légende du graphique (sélecteur DOM actuel TradingView)
-  const legendTitle = document.querySelector('[data-name="legend-source-title"]');
-  if (legendTitle) {
-    const text = legendTitle.textContent.trim().replace(/[^A-Z0-9.:]/gi, '');
-    if (text) {
-      data.asset = text.split(':').pop();
+
+  // Méthode 1: Titre de la page (toujours fiable, ex: "BTCUSD 68 847,00 ...")
+  const titleMatch = document.title.match(/^([A-Z0-9]+)/i);
+  if (titleMatch) {
+    data.asset = titleMatch[1];
+  }
+
+  // Méthode 2: Depuis l'URL (query string, avec décodage du %3A)
+  if (!data.asset) {
+    const urlMatch = window.location.href.match(/[?&]symbol=([^&]+)/i);
+    if (urlMatch) {
+      const decoded = decodeURIComponent(urlMatch[1]);
+      data.asset = decoded.split(':').pop().replace(/[^A-Z0-9.]/gi, '');
     }
   }
 
-  // Méthode 2: Header du graphique (sélecteurs alternatifs)
+  // Méthode 3: Légende scoped au conteneur principal du graphique
+  // (évite de matcher les éléments de la watchlist/sidebar)
+  if (!data.asset) {
+    const chartArea = document.querySelector('.chart-markup-table, .layout__area--center, [class*="chart-markup"]');
+    const legendTitle = (chartArea || document).querySelector('[data-name="legend-source-title"]');
+    if (legendTitle) {
+      const text = legendTitle.textContent.trim().replace(/[^A-Z0-9.:]/gi, '');
+      if (text) {
+        data.asset = text.split(':').pop();
+      }
+    }
+  }
+
+  // Méthode 4: Header du graphique (sélecteurs alternatifs)
   if (!data.asset) {
     const symbolSelectors = [
       '[data-symbol-short]',
@@ -42,23 +61,6 @@ function getChartData() {
           break;
         }
       }
-    }
-  }
-
-  // Méthode 3: Depuis le titre de la page
-  if (!data.asset) {
-    const titleMatch = document.title.match(/^([A-Z0-9.]+)/i);
-    if (titleMatch) {
-      data.asset = titleMatch[1];
-    }
-  }
-
-  // Méthode 4: Depuis l'URL (query string, avec décodage du %3A)
-  if (!data.asset) {
-    const urlMatch = window.location.href.match(/[?&]symbol=([^&]+)/i);
-    if (urlMatch) {
-      const decoded = decodeURIComponent(urlMatch[1]);
-      data.asset = decoded.split(':').pop().replace(/[^A-Z0-9.]/gi, '');
     }
   }
   
