@@ -37,6 +37,49 @@
         .completion-badge.complete { background: rgba(0, 212, 170, 0.2); color: #00d4aa; }
         @keyframes pulse-warning { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         .needs-attention { border-left: 3px solid #ffa502; }
+
+        /* Checkboxes */
+        .trade-checkbox {
+            width: 15px; height: 15px;
+            cursor: pointer;
+            accent-color: var(--accent-info);
+            flex-shrink: 0;
+        }
+        th.col-check, td.col-check {
+            width: 36px;
+            text-align: center;
+            padding-left: 0.75rem;
+        }
+        tr.selected-row { background: rgba(52, 152, 219, 0.06) !important; }
+
+        /* Barre d'export flottante */
+        .export-bar {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-active);
+            border-radius: 14px;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 200;
+            white-space: nowrap;
+        }
+        .export-bar.visible { transform: translateX(-50%) translateY(0); }
+        .export-bar .export-count {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-info);
+        }
+        .export-bar .export-divider {
+            width: 1px; height: 20px;
+            background: var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -44,7 +87,6 @@
         <a href="index.html" class="logo">TradeSpotter</a>
         <div class="header-actions">
             <a href="trade.html" class="btn btn-primary">+ Nouveau Trade</a>
-            <button class="btn btn-secondary" onclick="exportJSON()">📥 Export</button>
         </div>
     </header>
 
@@ -84,6 +126,9 @@
                     <table class="trades-table">
                         <thead>
                             <tr>
+                                <th class="col-check">
+                                    <input type="checkbox" class="trade-checkbox" id="selectAllChk" title="Tout sélectionner" onchange="toggleSelectAll(this.checked)">
+                                </th>
                                 <th>Date</th>
                                 <th>Actif</th>
                                 <th>Dir</th>
@@ -108,6 +153,14 @@
         </div>
     </main>
 
+    <!-- Barre d'export flottante -->
+    <div class="export-bar" id="exportBar">
+        <span class="export-count" id="exportCount">0 trade sélectionné</span>
+        <div class="export-divider"></div>
+        <button class="btn btn-sm btn-secondary" onclick="deselectAll()">✕ Désélectionner</button>
+        <button class="btn btn-sm btn-primary" onclick="downloadExport()">📥 Télécharger le JSON</button>
+    </div>
+
     <div class="toast" id="toast">
         <span id="toastMessage"></span>
     </div>
@@ -119,6 +172,7 @@
         let currentFilter = 'all';
         let currentDateFilter = 'all';
         let allTrades = [];
+        let selectedIds = new Set();
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadStats();
@@ -223,7 +277,7 @@
             
             if (trades.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="8" class="empty-state">
+                    <tr><td colspan="9" class="empty-state">
                         <div class="icon">📭</div>
                         Aucun trade
                     </td></tr>
@@ -233,8 +287,14 @@
 
             tbody.innerHTML = trades.map(t => {
                 const completion = getCompletionStatus(t);
+                const isSelected = selectedIds.has(String(t.id));
                 return `
-                <tr class="${t.status === 'encours' ? 'encours' : ''} ${completion.alert ? 'needs-attention' : ''}" onclick="window.location='trade.html?id=${t.id}'" style="cursor:pointer">
+                <tr class="${t.status === 'encours' ? 'encours' : ''} ${completion.alert ? 'needs-attention' : ''} ${isSelected ? 'selected-row' : ''}" onclick="window.location='trade.html?id=${t.id}'" style="cursor:pointer">
+                    <td class="col-check" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="trade-checkbox" data-id="${t.id}"
+                            ${isSelected ? 'checked' : ''}
+                            onchange="toggleSelect('${t.id}', this.checked)">
+                    </td>
                     <td>${formatDate(t.trade_date)}</td>
                     <td><strong>${t.asset}</strong></td>
                     <td><span class="badge ${t.direction}">${t.direction?.toUpperCase() || '-'}</span></td>
@@ -319,21 +379,78 @@
             });
         }
 
-        async function exportJSON() {
-            try {
-                const trades = await getTrades();
-                const data = JSON.stringify(trades, null, 2);
-                const blob = new Blob([data], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `tradespotter_${new Date().toISOString().split('T')[0]}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                showToast('📥 Export téléchargé !');
-            } catch (error) {
-                showToast('❌ Erreur export', true);
-            }
+        // Sélection
+        function toggleSelect(id, checked) {
+            if (checked) selectedIds.add(String(id));
+            else selectedIds.delete(String(id));
+            updateExportBar();
+            syncSelectAllCheckbox();
+            // Mettre à jour la classe de la ligne
+            const row = document.querySelector(`input[data-id="${id}"]`)?.closest('tr');
+            if (row) row.classList.toggle('selected-row', checked);
+        }
+
+        function toggleSelectAll(checked) {
+            const visible = document.querySelectorAll('.trade-checkbox[data-id]');
+            visible.forEach(chk => {
+                chk.checked = checked;
+                const id = chk.dataset.id;
+                if (checked) selectedIds.add(String(id));
+                else selectedIds.delete(String(id));
+                chk.closest('tr').classList.toggle('selected-row', checked);
+            });
+            updateExportBar();
+        }
+
+        function deselectAll() {
+            selectedIds.clear();
+            document.querySelectorAll('.trade-checkbox[data-id]').forEach(chk => {
+                chk.checked = false;
+                chk.closest('tr').classList.remove('selected-row');
+            });
+            const selectAllChk = document.getElementById('selectAllChk');
+            if (selectAllChk) selectAllChk.checked = false;
+            updateExportBar();
+        }
+
+        function syncSelectAllCheckbox() {
+            const allChks = document.querySelectorAll('.trade-checkbox[data-id]');
+            const selectAllChk = document.getElementById('selectAllChk');
+            if (!selectAllChk || allChks.length === 0) return;
+            const allChecked = [...allChks].every(chk => chk.checked);
+            selectAllChk.checked = allChecked;
+            selectAllChk.indeterminate = !allChecked && selectedIds.size > 0;
+        }
+
+        function updateExportBar() {
+            const bar = document.getElementById('exportBar');
+            const count = document.getElementById('exportCount');
+            const n = selectedIds.size;
+            bar.classList.toggle('visible', n > 0);
+            count.textContent = n === 1 ? '1 trade sélectionné' : `${n} trades sélectionnés`;
+        }
+
+        function downloadExport() {
+            const trades = allTrades.filter(t => selectedIds.has(String(t.id)));
+            if (trades.length === 0) { showToast('⚠️ Aucun trade sélectionné', true); return; }
+
+            // Nettoyer les images base64 pour alléger le JSON (garder juste un indicateur)
+            const exportData = trades.map(t => ({
+                ...t,
+                img_entry: t.img_entry ? '[image_entry_présente]' : null,
+                img_exit:  t.img_exit  ? '[image_exit_présente]'  : null,
+            }));
+
+            const date = new Date().toISOString().split('T')[0];
+            const json = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `trades-export-${date}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`📥 ${trades.length} trade(s) exporté(s) !`);
         }
 
         function showToast(message, isError = false) {
