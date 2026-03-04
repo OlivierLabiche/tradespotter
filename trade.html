@@ -430,6 +430,9 @@
             const setup = params.get('setup');
             if (setup) document.getElementById('setup').value = setup;
 
+            const rrVise = params.get('rrVise');
+            if (rrVise) document.getElementById('rrVise').value = rrVise;
+
             const dropEntry = document.getElementById('dropEntry');
             dropEntry.classList.add('from-extension');
             dropEntry.focus();

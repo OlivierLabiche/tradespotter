@@ -611,6 +611,10 @@ function showDirectionPopup(tvData, baseUrl) {
           <button type="button" class="ts-combobox-toggle" id="tsComboToggle">▾</button>
           <div class="ts-combobox-list" id="tsSetupList"></div>
         </div>
+        <div style="margin-top: 14px;">
+          <div class="ts-step-label" style="margin-bottom: 8px;">R:R visé <span style="color:#5a5a6e; font-size:11px; text-transform:none;">(optionnel)</span></div>
+          <input type="number" class="ts-setup-input" id="tsRrVise" step="0.1" min="0" placeholder="Ex: 3.0" style="width:100%; box-sizing:border-box;">
+        </div>
         <button class="ts-btn-open" id="tsBtnOpen">Ouvrir TradeSpotter →</button>
         <div class="ts-cancel">
           <button class="ts-btn-back">← Retour</button>
@@ -675,19 +679,20 @@ function showDirectionPopup(tvData, baseUrl) {
     // Confirmer
     overlay.querySelector('#tsBtnOpen').addEventListener('click', () => {
       const setup = input.value.trim();
+      const rrVise = overlay.querySelector('#tsRrVise')?.value.trim() || null;
       // Mémoriser le setup dans localStorage pour la prochaine fois
       if (setup && !savedSetups.includes(setup)) {
         savedSetups.push(setup);
         savedSetups.sort();
         localStorage.setItem('ts_setups', JSON.stringify(savedSetups));
       }
-      openTradeSpotter(setup);
+      openTradeSpotter(setup, rrVise);
     });
 
     overlay.querySelector('.ts-btn-back').addEventListener('click', showStep2);
   }
 
-  function openTradeSpotter(setup = null) {
+  function openTradeSpotter(setup = null, rrVise = null) {
     const now = new Date();
     const date = now.toISOString().split('T')[0];
     const time = now.toTimeString().slice(0, 5);
@@ -703,6 +708,7 @@ function showDirectionPopup(tvData, baseUrl) {
     });
 
     if (setup) params.set('setup', setup);
+    if (rrVise) params.set('rrVise', rrVise);
 
     const url = `${baseUrl}/trade.html?${params.toString()}`;
     window.open(url, '_blank');
