@@ -160,32 +160,16 @@
                     <button class="result-btn positif" onclick="setStatus('positif')">💰 Positif</button>
                 </div>
 
-                <!-- Analyse qualitative -->
-                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <!-- Problème principal -->
+                <div style="margin-top: 1.5rem;">
                     <div class="analyse-item">
                         <div class="analyse-header">
-                            <span class="analyse-label">Biais</span>
-                            <div class="toggle-buttons compact">
-                                <button type="button" class="toggle-btn bon-btn" data-field="biais" data-value="bon" onclick="setBonMauvais('biais', 'bon')">✅ Bon</button>
-                                <button type="button" class="toggle-btn mauvais-btn" data-field="biais" data-value="mauvais" onclick="setBonMauvais('biais', 'mauvais')">❌ Mauvais</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="analyse-item">
-                        <div class="analyse-header">
-                            <span class="analyse-label">POI</span>
-                            <div class="toggle-buttons compact">
-                                <button type="button" class="toggle-btn bon-btn" data-field="poi" data-value="bon" onclick="setBonMauvais('poi', 'bon')">✅ Bon</button>
-                                <button type="button" class="toggle-btn mauvais-btn" data-field="poi" data-value="mauvais" onclick="setBonMauvais('poi', 'mauvais')">❌ Mauvais</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="analyse-item">
-                        <div class="analyse-header">
-                            <span class="analyse-label">Prise de position</span>
-                            <div class="toggle-buttons compact">
-                                <button type="button" class="toggle-btn bon-btn" data-field="prisePosition" data-value="bon" onclick="setBonMauvais('prisePosition', 'bon')">✅ Bon</button>
-                                <button type="button" class="toggle-btn mauvais-btn" data-field="prisePosition" data-value="mauvais" onclick="setBonMauvais('prisePosition', 'mauvais')">❌ Mauvais</button>
+                            <span class="analyse-label">Problème principal</span>
+                            <div class="toggle-buttons compact" style="flex-wrap: wrap;">
+                                <button type="button" class="toggle-btn probleme-btn" data-value="biais" onclick="setProbleme('biais')">❌ Biais</button>
+                                <button type="button" class="toggle-btn probleme-btn" data-value="poi" onclick="setProbleme('poi')">❌ POI</button>
+                                <button type="button" class="toggle-btn probleme-btn" data-value="entree" onclick="setProbleme('entree')">❌ Entrée</button>
+                                <button type="button" class="toggle-btn no-probleme-btn" data-value="aucun" onclick="setProbleme('aucun')">✅ Pas de problème</button>
                             </div>
                         </div>
                     </div>
@@ -346,9 +330,9 @@
         .mindset-btn.intuitif.active { background: rgba(230,126,34,0.15); color: var(--accent-warning); border-color: var(--accent-warning); }
         .mindset-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
 
-        /* Bon / Mauvais */
-        .toggle-btn.bon-btn.active    { background: var(--accent-bull);  color: #fff; border-color: var(--accent-bull); }
-        .toggle-btn.mauvais-btn.active { background: var(--accent-bear); color: #fff; border-color: var(--accent-bear); }
+        /* Problème principal */
+        .toggle-btn.probleme-btn.active    { background: var(--accent-bear); color: #fff; border-color: var(--accent-bear); }
+        .toggle-btn.no-probleme-btn.active { background: var(--accent-bull); color: #fff; border-color: var(--accent-bull); }
 
         /* Toggle buttons compact */
         .toggle-buttons { display: flex; gap: 0.5rem; }
@@ -382,9 +366,7 @@
             direction: null,
             status: 'encours',
             mindset: null,
-            biais: null,
-            poi: null,
-            prisePosition: null,
+            problemePrincipal: null,
             images: { entry: null, exit: null }
         };
 
@@ -474,9 +456,7 @@
 
                 // Résultat
                 if (trade.status) setStatus(trade.status);
-                if (trade.biais) setBonMauvais('biais', trade.biais);
-                if (trade.poi) setBonMauvais('poi', trade.poi);
-                if (trade.prise_position) setBonMauvais('prisePosition', trade.prise_position);
+                if (trade.probleme_principal) setProbleme(trade.probleme_principal);
                 document.getElementById('potentielR').value = trade.potentiel_r || '';
                 document.getElementById('rObtenu').value = trade.r_obtenu !== null && trade.r_obtenu !== undefined ? trade.r_obtenu : '';
                 document.getElementById('sortiePartielle').value = trade.sortie_partielle || '';
@@ -531,10 +511,10 @@
             });
         }
 
-        // Biais / POI / Prise de position
-        function setBonMauvais(field, value) {
-            state[field] = value;
-            document.querySelectorAll(`.toggle-btn[data-field="${field}"]`).forEach(btn => {
+        // Problème principal
+        function setProbleme(value) {
+            state.problemePrincipal = value;
+            document.querySelectorAll('.probleme-btn, .no-probleme-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.value === value);
             });
         }
@@ -680,9 +660,7 @@
                     mode: document.getElementById('mode').value,
 
                     status: state.status,
-                    biais: state.biais || null,
-                    poi: state.poi || null,
-                    prise_position: state.prisePosition || null,
+                    probleme_principal: state.problemePrincipal || null,
                     potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
                     r_obtenu: (() => { const v = parseFloat(document.getElementById('rObtenu').value); return isNaN(v) ? null : v; })(),
                     sortie_partielle: document.getElementById('sortiePartielle').value.trim() || null,
