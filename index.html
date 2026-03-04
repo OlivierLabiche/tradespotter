@@ -434,12 +434,7 @@
             const trades = allTrades.filter(t => selectedIds.has(String(t.id)));
             if (trades.length === 0) { showToast('⚠️ Aucun trade sélectionné', true); return; }
 
-            // Nettoyer les images base64 pour alléger le JSON (garder juste un indicateur)
-            const exportData = trades.map(t => ({
-                ...t,
-                img_entry: t.img_entry ? '[image_entry_présente]' : null,
-                img_exit:  t.img_exit  ? '[image_exit_présente]'  : null,
-            }));
+            const exportData = trades;
 
             const date = new Date().toISOString().split('T')[0];
             const json = JSON.stringify(exportData, null, 2);
