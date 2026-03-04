@@ -250,10 +250,21 @@
         // Statut de complétion
         function getCompletionStatus(trade) {
             const isFinished = trade.status && trade.status !== 'encours';
-            const hasResult = trade.r_obtenu !== null && trade.r_obtenu !== undefined;
 
             if (!isFinished) return { level: 1, label: '⏳ En cours', alert: false };
-            if (!hasResult)  return { level: 3, label: '⚠️ Incomplet', alert: true };
+
+            const isComplete =
+                trade.tf_htf &&
+                trade.tf_ltf &&
+                trade.setup &&
+                trade.mindset &&
+                trade.img_entry &&
+                trade.img_exit &&
+                trade.probleme_principal &&
+                (trade.r_obtenu !== null && trade.r_obtenu !== undefined) &&
+                (trade.potentiel_r !== null && trade.potentiel_r !== undefined);
+
+            if (!isComplete) return { level: 3, label: '⚠️ Incomplet', alert: true };
             return { level: 5, label: '✅ Complet', alert: false };
         }
 
