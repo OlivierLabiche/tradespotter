@@ -175,14 +175,24 @@
                     </div>
                 </div>
 
-                <div class="form-grid-2" style="margin-top: 1.5rem;">
+                <div class="form-grid-3" style="margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            R:R visé
+                            <span title="R:R théorique visé au moment de l'entrée du trade" style="cursor:help; color:var(--text-muted); margin-left:4px;">ⓘ</span>
+                        </label>
+                        <input type="number" class="form-input" id="rrVise" step="0.1" placeholder="Ex: 3.0">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">R obtenu</label>
                         <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Potentiel R</label>
-                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
+                        <label class="form-label">
+                            R max atteint
+                            <span title="Jusqu'où le prix est allé en R après l'entrée — sert aux stats de gestion, pas au résultat" style="cursor:help; color:var(--text-muted); margin-left:4px;">ⓘ</span>
+                        </label>
+                        <input type="number" class="form-input" id="rMaxAtteint" step="0.1" placeholder="Ex: 4.5">
                     </div>
                 </div>
 
@@ -457,8 +467,9 @@
                 // Résultat
                 if (trade.status) setStatus(trade.status);
                 if (trade.probleme_principal) setProbleme(trade.probleme_principal);
-                document.getElementById('potentielR').value = trade.potentiel_r || '';
+                document.getElementById('rrVise').value = trade.rr_vise !== null && trade.rr_vise !== undefined ? trade.rr_vise : '';
                 document.getElementById('rObtenu').value = trade.r_obtenu !== null && trade.r_obtenu !== undefined ? trade.r_obtenu : '';
+                document.getElementById('rMaxAtteint').value = trade.r_max_atteint !== null && trade.r_max_atteint !== undefined ? trade.r_max_atteint : '';
                 document.getElementById('sortiePartielle').value = trade.sortie_partielle || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
@@ -661,8 +672,9 @@
 
                     status: state.status,
                     probleme_principal: state.problemePrincipal || null,
-                    potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
+                    rr_vise: parseFloat(document.getElementById('rrVise').value) || null,
                     r_obtenu: (() => { const v = parseFloat(document.getElementById('rObtenu').value); return isNaN(v) ? null : v; })(),
+                    r_max_atteint: parseFloat(document.getElementById('rMaxAtteint').value) || null,
                     sortie_partielle: document.getElementById('sortiePartielle').value.trim() || null,
                     notes_exit: document.getElementById('notes').value || null,
 

@@ -322,7 +322,7 @@
                 trade.img_exit &&
                 trade.probleme_principal &&
                 (trade.r_obtenu !== null && trade.r_obtenu !== undefined) &&
-                (trade.potentiel_r !== null && trade.potentiel_r !== undefined);
+                (trade.r_max_atteint !== null && trade.r_max_atteint !== undefined);
 
             if (!isComplete) return { level: 3, label: '⚠️ Incomplet', alert: true };
             return { level: 5, label: '✅ Complet', alert: false };
