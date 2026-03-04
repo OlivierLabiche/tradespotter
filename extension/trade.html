@@ -89,6 +89,14 @@
                         <button type="button" class="direction-btn short" onclick="setDirection('short')">📉 SHORT</button>
                     </div>
                 </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">
+                        R:R visé
+                        <span title="R:R théorique visé au moment de l'entrée du trade" style="cursor:help; color:var(--text-muted); margin-left:4px;">ⓘ</span>
+                    </label>
+                    <input type="number" class="form-input" id="rrVise" step="0.1" placeholder="Ex: 3.0">
+                </div>
             </div>
         </div>
 
@@ -333,15 +341,9 @@
                     <button class="result-btn positif" onclick="setStatus('positif')">💰 Positif</button>
                 </div>
 
-                <div class="form-grid-2" style="margin-top: 1.5rem;">
-                    <div class="form-group">
-                        <label class="form-label">Potentiel du trade (R)</label>
-                        <input type="number" class="form-input" id="potentielR" step="0.1" placeholder="Ex: 3.5">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">R obtenu</label>
-                        <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
-                    </div>
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label">R obtenu</label>
+                    <input type="number" class="form-input" id="rObtenu" step="0.1" placeholder="Ex: 2.0">
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
@@ -584,7 +586,7 @@
                 
                 // Résultat
                 if (trade.status) setStatus(trade.status);
-                document.getElementById('potentielR').value = trade.potentiel_r || '';
+                document.getElementById('rrVise').value = trade.rr_vise !== null && trade.rr_vise !== undefined ? trade.rr_vise : '';
                 document.getElementById('rObtenu').value = trade.r_obtenu || '';
                 document.getElementById('notes').value = trade.notes_exit || '';
                 
@@ -875,8 +877,8 @@
                     score_objectif: scores.objectif || null,
                     score_avg: scoreAvg ? parseFloat(scoreAvg) : null,
                     
+                    rr_vise: parseFloat(document.getElementById('rrVise').value) || null,
                     status: state.status,
-                    potentiel_r: parseFloat(document.getElementById('potentielR').value) || null,
                     r_obtenu: parseFloat(document.getElementById('rObtenu').value) || null,
                     notes_exit: document.getElementById('notes').value || null,
                     
