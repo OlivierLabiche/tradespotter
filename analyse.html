@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse - TradeSpotter</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-intro {
+            margin-bottom: 2rem;
+        }
+        .page-intro h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .page-intro p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .section-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        /* Chips filtres actifs */
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 2rem;
+            align-items: center;
+        }
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.7rem;
+            background: rgba(52, 152, 219, 0.12);
+            border: 1px solid rgba(52, 152, 219, 0.35);
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--accent-info);
+        }
+        .filter-chip .remove-chip {
+            cursor: pointer;
+            opacity: 0.65;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0 2px;
+            border: none;
+            background: none;
+            color: var(--accent-info);
+        }
+        .filter-chip .remove-chip:hover { opacity: 1; }
+        .no-filter-msg {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        /* Presets */
+        .preset-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .preset-btn {
+            padding: 0.35rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: inherit;
+        }
+        .preset-btn:hover {
+            border-color: var(--accent-info);
+            color: var(--accent-info);
+            background: rgba(52, 152, 219, 0.06);
+        }
+
+        /* Filtre manuel */
+        .filter-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-row .form-select,
+        .filter-row .form-input {
+            width: auto;
+            flex-shrink: 0;
+        }
+        .filter-row .form-input { width: 110px; }
+
+        /* Résultats */
+        .results-list {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .result-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.55rem 0.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.84rem;
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-row .r-date { color: var(--text-muted); font-size: 0.78rem; min-width: 68px; }
+        .result-row .r-asset { font-weight: 600; min-width: 75px; }
+        .result-row .r-meta { color: var(--text-secondary); font-size: 0.79rem; flex: 1; }
+        .result-row .r-imgs { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+        .empty-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 0.88rem;
+        }
+
+        /* Options image */
+        .img-options {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .img-option-label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1.1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.18s;
+            font-size: 0.88rem;
+            user-select: none;
+        }
+        .img-option-label:hover { border-color: var(--accent-info); }
+        .img-option-label.selected {
+            border-color: var(--accent-info);
+            background: rgba(52, 152, 219, 0.08);
+            color: var(--text-primary);
+        }
+        .img-option-label input[type="checkbox"] {
+            accent-color: var(--accent-info);
+            width: 15px;
+            height: 15px;
+        }
+
+        /* Progress */
+        .progress-wrap {
+            display: none;
+            margin-bottom: 1rem;
+        }
+        .progress-label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-secondary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-info);
+            border-radius: 2px;
+            transition: width 0.25s ease;
+            width: 0%;
+        }
+
+        /* Séparateur section */
+        .section-sep {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 1.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">TradeSpotter</a>
+        <div class="header-actions">
+            <a href="index.html" class="btn btn-secondary">← Retour</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-intro">
+            <h1>🔍 Export Analyse</h1>
+            <p>Filtre les trades par critère et génère un PDF d'images prêt à uploader dans Claude</p>
+        </div>
+
+        <!-- ── FILTRES ── -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Filtres</h2>
+                <span id="filterCountLabel" style="font-size: 0.8rem; color: var(--text-muted);">0 filtre actif</span>
+            </div>
+            <div class="card-content">
+
+                <!-- Filtres actifs -->
+                <div class="section-label">Filtres actifs</div>
+                <div id="activeFiltersContainer" class="filter-chips">
+                    <span class="no-filter-msg">Aucun filtre — tous les trades seront inclus</span>
+                </div>
+
+                <hr class="section-sep">
+
+                <!-- Presets -->
+                <div class="section-label">Filtres rapides</div>
+                <div class="preset-grid">
+                    <button class="preset-btn" onclick="addPreset('probleme_principal','eq','biais','Problème: Biais')">❌ Mauvais biais</button>
+                    <button class="preset-btn" onclick="addPreset('mindset','eq','intuitif','Mindset: Intuitif')">🎲 Intuitif</button>
+                    <button class="preset-btn" onclick="addPreset('status','eq','sl','Résultat: SL')">❌ Pertes (SL)</button>
+                    <button class="preset-btn" onclick="addPreset('status','eq','tp','Résultat: TP')">✅ TP uniquement</button>
+                    <button class="preset-btn" onclick="addPreset('probleme_principal','eq','poi','Problème: POI')">❌ Mauvais POI</button>
+                    <button class="preset-btn" onclick="addPreset('probleme_principal','eq','entree','Problème: Entrée')">❌ Mauvaise entrée</button>
+                    <button class="preset-btn" onclick="addPreset('probleme_principal','eq','money_management','Problème: MM')">❌ Money Management</button>
+                    <button class="preset-btn" onclick="addPreset('mindset','eq','plan','Mindset: Plan')">🎯 Trades plan</button>
+                    <button class="preset-btn" onclick="addPreset('status','eq','encours','Statut: En cours')">🔄 En cours</button>
+                </div>
+
+                <hr class="section-sep">
+
+                <!-- Filtre manuel -->
+                <div class="section-label">Filtre personnalisé</div>
+                <div class="filter-row">
+                    <select class="form-select" id="customField" onchange="updateCustomOps()">
+                        <option value="r_max_atteint">R max atteint</option>
+                        <option value="rr_vise">RR visé</option>
+                        <option value="r_obtenu">R obtenu</option>
+                        <option value="asset">Actif</option>
+                        <option value="setup">Setup</option>
+                        <option value="direction">Direction</option>
+                        <option value="tf_htf">TF HTF</option>
+                        <option value="tf_ltf">TF LTF</option>
+                    </select>
+                    <select class="form-select" id="customOp">
+                        <option value="gte">≥</option>
+                        <option value="gt">&gt;</option>
+                        <option value="lte">≤</option>
+                        <option value="lt">&lt;</option>
+                        <option value="eq">=</option>
+                    </select>
+                    <input type="text" class="form-input" id="customValue" placeholder="Ex: 5" onkeydown="if(event.key==='Enter') addCustomFilter()">
+                    <button class="btn btn-secondary" onclick="addCustomFilter()">+ Ajouter</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── RÉSULTATS ── -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Résultats</h2>
+                <span id="matchCountLabel" style="font-size: 0.88rem; font-weight: 600; color: var(--accent-info);">—</span>
+            </div>
+            <div class="card-content" style="padding: 0;">
+                <div class="results-list" id="resultsList">
+                    <div class="empty-results">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── OPTIONS & EXPORT ── -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Options export</h2>
+            </div>
+            <div class="card-content">
+                <div class="section-label">Images à inclure</div>
+                <div class="img-options" style="margin-bottom: 1.5rem;">
+                    <label class="img-option-label selected" id="optEntry">
+                        <input type="checkbox" id="chkEntry" checked onchange="syncImgOption('Entry')">
+                        <span>📸 Prise de position</span>
+                    </label>
+                    <label class="img-option-label selected" id="optExit">
+                        <input type="checkbox" id="chkExit" checked onchange="syncImgOption('Exit')">
+                        <span>🏁 Trade fini (HTF)</span>
+                    </label>
+                </div>
+
+                <div class="progress-wrap" id="progressWrap">
+                    <div class="progress-label" id="progressLabel">Génération en cours...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="btnGenerate" onclick="generate()" style="width: 100%; padding: 0.85rem;">
+                    🤖 Générer le PDF pour Claude
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"><span id="toastMessage"></span></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trades.js"></script>
+    <script>
+        // ─── State ────────────────────────────────────────────────────────────
+        let allTrades = [];
+        let activeFilters = [];
+
+        const NUMERIC_FIELDS = ['r_max_atteint', 'rr_vise', 'r_obtenu'];
+        const FIELD_LABELS = {
+            r_max_atteint: 'R max', rr_vise: 'RR visé', r_obtenu: 'R obtenu',
+            asset: 'Actif', setup: 'Setup', direction: 'Direction',
+            tf_htf: 'TF HTF', tf_ltf: 'TF LTF'
+        };
+        const OP_LABELS = { gte: '≥', gt: '>', lte: '≤', lt: '<', eq: '=', neq: '≠', contains: 'contient' };
+        const STATUS_LABELS = { tp: '✅ TP', sl: '❌ SL', be: '⚖️ BE', encours: '🔄', positif: '💰' };
+
+        // ─── Init ─────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                allTrades = await getTrades();
+            } catch(e) {
+                allTrades = [];
+            }
+            renderResults();
+        });
+
+        // ─── Filtres ──────────────────────────────────────────────────────────
+        function addPreset(field, op, value, label) {
+            if (activeFilters.find(f => f.field === field && f.op === op && String(f.value) === String(value))) return;
+            activeFilters.push({ field, op, value, label });
+            renderFilters();
+            renderResults();
+        }
+
+        function addCustomFilter() {
+            const field = document.getElementById('customField').value;
+            const op = document.getElementById('customOp').value;
+            const raw = document.getElementById('customValue').value.trim();
+            if (!raw) { showToast('⚠️ Valeur requise', true); return; }
+
+            const value = NUMERIC_FIELDS.includes(field) ? parseFloat(raw) : raw;
+            if (NUMERIC_FIELDS.includes(field) && isNaN(value)) {
+                showToast('⚠️ Valeur numérique requise', true);
+                return;
+            }
+
+            if (activeFilters.find(f => f.field === field && f.op === op && String(f.value) === String(value))) return;
+
+            const label = `${FIELD_LABELS[field] || field} ${OP_LABELS[op]} ${raw}`;
+            activeFilters.push({ field, op, value, label });
+            document.getElementById('customValue').value = '';
+            renderFilters();
+            renderResults();
+        }
+
+        function removeFilter(idx) {
+            activeFilters.splice(idx, 1);
+            renderFilters();
+            renderResults();
+        }
+
+        function renderFilters() {
+            const container = document.getElementById('activeFiltersContainer');
+            const n = activeFilters.length;
+            document.getElementById('filterCountLabel').textContent =
+                n === 0 ? '0 filtre actif' : `${n} filtre${n > 1 ? 's' : ''} actif${n > 1 ? 's' : ''}`;
+
+            if (n === 0) {
+                container.innerHTML = '<span class="no-filter-msg">Aucun filtre — tous les trades seront inclus</span>';
+                return;
+            }
+            container.innerHTML = activeFilters.map((f, i) => `
+                <div class="filter-chip">
+                    <span>${f.label}</span>
+                    <button class="remove-chip" onclick="removeFilter(${i})" title="Retirer">×</button>
+                </div>
+            `).join('');
+        }
+
+        function updateCustomOps() {
+            const field = document.getElementById('customField').value;
+            const opSel = document.getElementById('customOp');
+            if (NUMERIC_FIELDS.includes(field)) {
+                opSel.innerHTML = `
+                    <option value="gte">≥</option>
+                    <option value="gt">&gt;</option>
+                    <option value="lte">≤</option>
+                    <option value="lt">&lt;</option>
+                    <option value="eq">=</option>
+                `;
+            } else {
+                opSel.innerHTML = `
+                    <option value="eq">=</option>
+                    <option value="contains">contient</option>
+                    <option value="neq">≠</option>
+                `;
+            }
+        }
+
+        // ─── Résultats ────────────────────────────────────────────────────────
+        function applyFilters(trades) {
+            if (!activeFilters.length) return trades;
+            return trades.filter(trade =>
+                activeFilters.every(f => {
+                    const val = trade[f.field];
+                    switch (f.op) {
+                        case 'eq':       return val === f.value;
+                        case 'neq':      return val !== f.value;
+                        case 'gt':       return val != null && val > f.value;
+                        case 'gte':      return val != null && val >= f.value;
+                        case 'lt':       return val != null && val < f.value;
+                        case 'lte':      return val != null && val <= f.value;
+                        case 'contains': return val != null && String(val).toLowerCase().includes(String(f.value).toLowerCase());
+                        default:         return true;
+                    }
+                })
+            );
+        }
+
+        function renderResults() {
+            const filtered = applyFilters(allTrades);
+            const list = document.getElementById('resultsList');
+            const countLabel = document.getElementById('matchCountLabel');
+
+            countLabel.textContent = `${filtered.length} trade${filtered.length !== 1 ? 's' : ''}`;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-results">Aucun trade ne correspond à ces filtres</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(t => {
+                const meta = [
+                    t.setup,
+                    t.r_obtenu != null ? `R: ${t.r_obtenu > 0 ? '+' : ''}${t.r_obtenu}` : null,
+                    t.r_max_atteint != null ? `Rmax: ${t.r_max_atteint}` : null,
+                    t.mindset === 'intuitif' ? '🎲 Intuitif' : (t.mindset === 'plan' ? '🎯 Plan' : null),
+                    t.probleme_principal && t.probleme_principal !== 'aucun' ? `Pb: ${t.probleme_principal}` : null,
+                ].filter(Boolean).join(' · ');
+
+                const imgs = [
+                    t.img_entry ? '📸' : '<span style="opacity:.3">📸</span>',
+                    t.img_exit  ? '🏁' : '<span style="opacity:.3">🏁</span>',
+                ].join(' ');
+
+                return `
+                <div class="result-row">
+                    <span class="r-date">${t.trade_date || '—'}</span>
+                    <span class="r-asset">${t.asset || '—'}</span>
+                    <span class="badge ${t.direction}" style="font-size:0.7rem;">${(t.direction || '-').toUpperCase()}</span>
+                    <span style="font-size:0.82rem; white-space:nowrap;">${STATUS_LABELS[t.status] || '-'}</span>
+                    <span class="r-meta">${meta}</span>
+                    <span class="r-imgs">${imgs}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function syncImgOption(type) {
+            const chk = document.getElementById(`chk${type}`);
+            document.getElementById(`opt${type}`).classList.toggle('selected', chk.checked);
+        }
+
+        // ─── PDF ──────────────────────────────────────────────────────────────
+        async function generate() {
+            const filtered = applyFilters(allTrades);
+            if (!filtered.length) { showToast('⚠️ Aucun trade à exporter', true); return; }
+
+            const includeEntry = document.getElementById('chkEntry').checked;
+            const includeExit  = document.getElementById('chkExit').checked;
+            if (!includeEntry && !includeExit) {
+                showToast('⚠️ Sélectionne au moins un type d\'image', true);
+                return;
+            }
+
+            const btn = document.getElementById('btnGenerate');
+            btn.disabled = true;
+            btn.textContent = '⏳ Génération...';
+            showProgress(true);
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+                const PW = 210, PH = 297, M = 12;
+                const CW = PW - 2 * M;
+
+                let firstPage = true;
+
+                for (let i = 0; i < filtered.length; i++) {
+                    const t = filtered[i];
+                    setProgress(Math.round(i / filtered.length * 100));
+                    setProgressLabel(`Trade ${i + 1} / ${filtered.length} — ${t.asset}`);
+
+                    if (!firstPage) doc.addPage();
+                    firstPage = false;
+
+                    let y = M;
+
+                    // ── Bandeau header ──
+                    doc.setFillColor(242, 244, 248);
+                    doc.roundedRect(M, y, CW, 26, 2, 2, 'F');
+
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(12);
+                    doc.setTextColor(20, 22, 35);
+                    const statusTxt = { tp: 'TP', sl: 'SL', be: 'BE', encours: 'EN COURS', positif: 'POSITIF' };
+                    doc.text(
+                        `${t.asset || '?'}   ${(t.direction || '').toUpperCase()}   ${statusTxt[t.status] || ''}`,
+                        M + 4, y + 9
+                    );
+
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8.5);
+                    doc.setTextColor(110, 115, 135);
+                    doc.text(t.trade_date || '', PW - M - 4, y + 9, { align: 'right' });
+
+                    const details = [
+                        t.setup && `Setup: ${t.setup}`,
+                        t.mindset && `Mindset: ${t.mindset}`,
+                        t.rr_vise   != null && `RR visé: ${t.rr_vise}`,
+                        t.r_obtenu  != null && `R obtenu: ${t.r_obtenu > 0 ? '+' : ''}${t.r_obtenu}`,
+                        t.r_max_atteint != null && `R max: ${t.r_max_atteint}`,
+                        t.probleme_principal && t.probleme_principal !== 'aucun' && `Problème: ${t.probleme_principal}`,
+                    ].filter(Boolean).join('   ·   ');
+
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(120, 125, 145);
+                    doc.text(details || '—', M + 4, y + 20);
+                    y += 32;
+
+                    // ── Notes ──
+                    if (t.notes_exit) {
+                        doc.setFontSize(7.5);
+                        doc.setTextColor(140, 140, 160);
+                        const lines = doc.splitTextToSize('Notes : ' + t.notes_exit, CW);
+                        doc.text(lines.slice(0, 2), M, y);
+                        y += lines.slice(0, 2).length * 4 + 3;
+                    }
+
+                    // ── Images ──
+                    const imgs = [];
+                    if (includeEntry && t.img_entry) imgs.push({ url: t.img_entry, label: 'Prise de position' });
+                    if (includeExit  && t.img_exit)  imgs.push({ url: t.img_exit,  label: 'Trade fini (HTF)'  });
+
+                    if (!imgs.length) {
+                        doc.setFontSize(9);
+                        doc.setTextColor(160, 160, 180);
+                        doc.text('Aucune image disponible pour ce trade', M, y + 8);
+                        continue;
+                    }
+
+                    const imgW = imgs.length === 2 ? (CW - 6) / 2 : CW;
+                    const availH = PH - y - M - 10;
+
+                    // Labels
+                    imgs.forEach((img, idx) => {
+                        const x = M + idx * (imgW + 6);
+                        doc.setFontSize(7);
+                        doc.setTextColor(140, 140, 160);
+                        doc.text(img.label, x, y);
+                    });
+                    y += 5;
+
+                    // Fetch & draw images (en parallèle pour gagner du temps)
+                    const infos = await Promise.all(imgs.map(img => fetchImageInfo(img.url)));
+
+                    // Hauteur max parmi les images (en respectant l'aspect ratio)
+                    let maxH = 0;
+                    infos.forEach(info => {
+                        if (info) {
+                            const h = Math.min(imgW * (info.height / info.width), availH);
+                            if (h > maxH) maxH = h;
+                        }
+                    });
+                    if (maxH === 0) maxH = imgW * (9 / 16);
+
+                    infos.forEach((info, idx) => {
+                        const x = M + idx * (imgW + 6);
+                        if (info) {
+                            const ratio = info.height / info.width;
+                            const finalH = Math.min(imgW * ratio, availH);
+                            const fmt = info.base64.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG';
+                            doc.addImage(info.base64, fmt, x, y, imgW, finalH, '', 'FAST');
+                        } else {
+                            // Placeholder image manquante
+                            doc.setFillColor(228, 230, 238);
+                            doc.rect(x, y, imgW, maxH, 'F');
+                            doc.setFontSize(8);
+                            doc.setTextColor(160, 160, 180);
+                            doc.text('Image non disponible', x + imgW / 2, y + maxH / 2, { align: 'center' });
+                        }
+                    });
+                }
+
+                setProgress(100);
+                setProgressLabel('Téléchargement...');
+
+                const date = new Date().toISOString().split('T')[0];
+                const filterStr = activeFilters.length
+                    ? activeFilters.map(f => f.label.replace(/[^a-zA-Z0-9]/g, '_')).join('-')
+                    : 'tous';
+                doc.save(`tradespotter-${filterStr}-${date}.pdf`);
+                showToast(`✅ PDF généré — ${filtered.length} trade(s)`);
+
+            } catch (err) {
+                console.error('Erreur PDF:', err);
+                showToast('❌ Erreur lors de la génération', true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🤖 Générer le PDF pour Claude';
+                setTimeout(() => showProgress(false), 2000);
+            }
+        }
+
+        async function fetchImageInfo(url) {
+            try {
+                const res = await fetch(url, { mode: 'cors' });
+                if (!res.ok) return null;
+                const blob = await res.blob();
+
+                const base64 = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror  = () => resolve(null);
+                    reader.readAsDataURL(blob);
+                });
+                if (!base64) return null;
+
+                const dims = await new Promise(resolve => {
+                    const img = new Image();
+                    img.onload  = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+                    img.onerror = () => resolve({ width: 16, height: 9 });
+                    img.src = base64;
+                });
+
+                return { base64, ...dims };
+            } catch {
+                return null;
+            }
+        }
+
+        function showProgress(visible) {
+            document.getElementById('progressWrap').style.display = visible ? 'block' : 'none';
+            if (!visible) {
+                document.getElementById('progressFill').style.width = '0%';
+            }
+        }
+        function setProgress(pct) {
+            document.getElementById('progressFill').style.width = pct + '%';
+        }
+        function setProgressLabel(msg) {
+            document.getElementById('progressLabel').textContent = msg;
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.toggle('error', isError);
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+    </script>
+</body>
+</html>
