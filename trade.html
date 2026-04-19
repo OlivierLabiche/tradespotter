@@ -303,12 +303,13 @@
                 </div>
             </div>
 
-            <!-- Section 1 : Biais -->
+            <!-- Section 1 : Analyse préalable -->
             <div class="analyse-section">
                 <div class="analyse-section-title">1 — Analyse préalable</div>
-                <div class="biais-toggle">
-                    <button class="biais-btn yes" onclick="setAnalyse('analyse_biais_fait', true)">✅ Oui, j'ai analysé le biais avant</button>
-                    <button class="biais-btn no"  onclick="setAnalyse('analyse_biais_fait', false)">❌ Non, entrée sans analyse</button>
+                <div class="radio-group">
+                    <button class="radio-btn danger"  data-field="analyse_biais_qualite" data-value="aucune"      onclick="setRadio('analyse_biais_qualite','aucune')">Aucune analyse</button>
+                    <button class="radio-btn warn"    data-field="analyse_biais_qualite" data-value="baclee"      onclick="setRadio('analyse_biais_qualite','baclee')">Analyse bâclée</button>
+                    <button class="radio-btn success" data-field="analyse_biais_qualite" data-value="approfondie" onclick="setRadio('analyse_biais_qualite','approfondie')">Analyse approfondie</button>
                 </div>
             </div>
 
@@ -1351,9 +1352,8 @@
         // ─── Chargement des données analyse dans le formulaire ───────────────────────
 
         function loadAnalyseData(trade) {
-            // Biais
-            if (trade.analyse_biais_fait === true)  setBiaisActive(true);
-            else if (trade.analyse_biais_fait === false) setBiaisActive(false);
+            // Qualité analyse préalable
+            if (trade.analyse_biais_qualite) setRadio('analyse_biais_qualite', trade.analyse_biais_qualite, true);
 
             // TF selects tendances (avec coloration)
             const tfMap = {
