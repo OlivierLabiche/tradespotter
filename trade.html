@@ -290,7 +290,7 @@
                         </select>
                     </div>
                     <div class="tf-struct-field">
-                        <label class="tf-struct-label">TF Exécution réelle <em>TF utilisée pour l'entrée effective</em></label>
+                        <label class="tf-struct-label">TF Exécution réelle</label>
                         <select class="tf-select" id="sel_tf_reentry" data-field="analyse_tf_reentry" onchange="onTfStructChange(this)">
                             <option value="">—</option>
                             <option value="M15">M15</option>
@@ -386,7 +386,7 @@
                     <div class="radio-group">
                         <button class="radio-btn danger" data-field="analyse_liq_externe_qualite" data-value="absente" onclick="setRadio('analyse_liq_externe_qualite','absente')">Absente</button>
                         <button class="radio-btn warn"   data-field="analyse_liq_externe_qualite" data-value="faible"  onclick="setRadio('analyse_liq_externe_qualite','faible')">Faible</button>
-                        <button class="radio-btn success" data-field="analyse_liq_externe_qualite" data-value="nette"  onclick="setRadio('analyse_liq_externe_qualite','nette')">Nette <span style="font-weight:400;font-size:0.72rem;">(trendline 3+pts)</span></button>
+                        <button class="radio-btn success" data-field="analyse_liq_externe_qualite" data-value="nette"  onclick="setRadio('analyse_liq_externe_qualite','nette')">Nette</button>
                     </div>
                 </div>
                 <div class="liq-group">
@@ -394,7 +394,7 @@
                     <div class="radio-group">
                         <button class="radio-btn danger" data-field="analyse_liq_interne_qualite" data-value="absente" onclick="setRadio('analyse_liq_interne_qualite','absente')">Absente</button>
                         <button class="radio-btn warn"   data-field="analyse_liq_interne_qualite" data-value="faible"  onclick="setRadio('analyse_liq_interne_qualite','faible')">Faible</button>
-                        <button class="radio-btn success" data-field="analyse_liq_interne_qualite" data-value="nette"  onclick="setRadio('analyse_liq_interne_qualite','nette')">Nette <span style="font-weight:400;font-size:0.72rem;">(BC/AR/ST/Spring)</span></button>
+                        <button class="radio-btn success" data-field="analyse_liq_interne_qualite" data-value="nette"  onclick="setRadio('analyse_liq_interne_qualite','nette')">Nette</button>
                     </div>
                 </div>
             </div>
@@ -598,8 +598,8 @@
         .verdict-btn.no.active  { background: rgba(231,76,60,0.15);  color: var(--accent-bear); border-color: var(--accent-bear); }
 
         /* ── Structure TF du trade ── */
-        .tf-struct-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-        .tf-struct-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1 1 100px; min-width: 0; }
+        .tf-struct-row { display: flex; gap: 0.75rem; }
+        .tf-struct-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 0; }
         .tf-struct-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
         .tf-struct-label em { display: block; font-style: italic; font-weight: 400; font-size: 0.68rem; color: var(--text-muted); margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
