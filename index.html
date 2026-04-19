@@ -52,6 +52,28 @@
         }
         tr.selected-row { background: rgba(52, 152, 219, 0.06) !important; }
 
+        .analyse-filter-btn {
+            padding: 0.35rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .analyse-filter-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .analyse-filter-btn.active { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border-color: #9b59b6; }
+        .analyse-done-badge {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent-bull);
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
         /* Barre d'export flottante */
         .export-bar {
             position: fixed;
@@ -103,6 +125,10 @@
             <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">En cours</div></div>
         </div>
 
+        <div id="analyseProgress" style="display:none; margin-bottom:1rem; padding:0.6rem 1rem; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); font-size:0.85rem; color:var(--text-secondary);">
+            🔬 Analyse post-hoc : <strong id="analyseDone">—</strong>/<strong id="analyseTotal">—</strong> trades analysés
+        </div>
+
         <!-- Trades List -->
         <div class="card">
             <div class="card-header">
@@ -122,6 +148,11 @@
                     <button class="date-filter-btn" data-period="week">Cette semaine</button>
                     <button class="date-filter-btn" data-period="month">Ce mois</button>
                 </div>
+                <div class="filters" style="margin-top: 0.5rem;">
+                    <button class="analyse-filter-btn active" data-afilter="all">🔬 Tous</button>
+                    <button class="analyse-filter-btn" data-afilter="done">✅ Analysés</button>
+                    <button class="analyse-filter-btn" data-afilter="todo">⏳ Non analysés</button>
+                </div>
 
                 <div class="table-container">
                     <table class="trades-table">
@@ -137,12 +168,13 @@
                                 <th>Mindset</th>
                                 <th>Complétion</th>
                                 <th>RR</th>
+                                <th title="Analyse post-hoc">🔬</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody id="tradesBody">
                             <tr>
-                                <td colspan="8" class="loading">
+                                <td colspan="10" class="loading">
                                     <div class="spinner"></div>
                                     Chargement...
                                 </td>
@@ -172,6 +204,7 @@
     <script>
         let currentFilter = 'all';
         let currentDateFilter = 'all';
+        let currentAnalyseFilter = 'all';
         let allTrades = [];
         let selectedIds = new Set();
 
@@ -223,10 +256,11 @@
             try {
                 allTrades = await getTrades();
                 applyFilter();
+                loadAnalyseProgress();
             } catch (error) {
                 console.error('Erreur trades:', error);
                 document.getElementById('tradesBody').innerHTML = `
-                    <tr><td colspan="8" class="empty-state">
+                    <tr><td colspan="10" class="empty-state">
                         <div class="icon">⚠️</div>
                         Erreur de connexion à la base de données
                     </td></tr>
@@ -270,7 +304,22 @@
                 filtered = filtered.filter(t => getCompletionStatus(t).alert);
             }
 
+            if (currentAnalyseFilter === 'done') {
+                filtered = filtered.filter(t => t.analyse_posthoc_done === true);
+            } else if (currentAnalyseFilter === 'todo') {
+                filtered = filtered.filter(t => !t.analyse_posthoc_done);
+            }
+
             renderTrades(filtered);
+        }
+
+        async function loadAnalyseProgress() {
+            try {
+                const prog = await getAnalyseProgress();
+                document.getElementById('analyseDone').textContent = prog.done;
+                document.getElementById('analyseTotal').textContent = prog.total;
+                document.getElementById('analyseProgress').style.display = prog.total > 0 ? 'block' : 'none';
+            } catch(e) {}
         }
 
         function renderTrades(trades) {
@@ -278,7 +327,7 @@
             
             if (trades.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="9" class="empty-state">
+                    <tr><td colspan="10" class="empty-state">
                         <div class="icon">📭</div>
                         Aucun trade
                     </td></tr>
@@ -303,6 +352,9 @@
                     <td>${renderMindset(t.mindset)}</td>
                     <td>${renderCompletion(completion)}</td>
                     <td>${t.r_obtenu != null ? (t.r_obtenu > 0 ? '+' : '') + t.r_obtenu : '-'}</td>
+                    <td style="text-align:center;">
+                        ${t.analyse_posthoc_done ? '<span title="Analysé" style="color:var(--accent-bull);font-size:0.85rem;">✓</span>' : '<span style="color:var(--border-color);font-size:0.75rem;">·</span>'}
+                    </td>
                     <td><button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); window.location='trade.html?id=${t.id}'">✏️</button></td>
                 </tr>
             `}).join('');
@@ -375,6 +427,15 @@
                     document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentDateFilter = btn.dataset.period;
+                    applyFilter();
+                });
+            });
+            // Filtres analyse
+            document.querySelectorAll('.analyse-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.analyse-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentAnalyseFilter = btn.dataset.afilter;
                     applyFilter();
                 });
             });

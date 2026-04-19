@@ -17,6 +17,14 @@
     </header>
 
     <main class="container">
+        <!-- Navigation onglets -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="saisie" onclick="switchTab('saisie')">📋 Saisie</button>
+            <button class="tab-btn" data-tab="analyse" onclick="switchTab('analyse')">🔬 Analyse</button>
+        </div>
+
+        <div id="tab-saisie" class="tab-content active">
+
         <!-- Banner pour extension -->
         <div class="extension-banner" id="extensionBanner" style="display:none">
             <span>📸 Screenshot dans le presse-papier</span>
@@ -215,6 +223,152 @@
         <div class="actions-bar">
             <button class="btn btn-primary" id="btnSave" onclick="handleSave()">💾 Enregistrer</button>
         </div>
+
+        </div><!-- /tab-saisie -->
+
+        <div id="tab-analyse" class="tab-content">
+
+            <!-- Header sticky analyse -->
+            <div class="analyse-header-sticky">
+                <div class="analyse-trade-info" id="analyseTradeInfo">—</div>
+                <a id="btnTradingView" href="#" target="_blank" class="btn btn-secondary" style="font-size:0.78rem; padding:0.3rem 0.7rem; white-space:nowrap;">📈 TradingView</a>
+                <div class="analyse-nav-btns">
+                    <button class="analyse-nav-btn" id="btnPrevUnanalysed" onclick="navUnanalysed(-1)" disabled>← Précédent</button>
+                    <span class="analyse-progress-label" id="analyseProgressLabel">—</span>
+                    <button class="analyse-nav-btn" id="btnNextUnanalysed" onclick="navUnanalysed(1)" disabled>Suivant →</button>
+                </div>
+            </div>
+
+            <!-- Section 1 : Biais -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">1 — Analyse préalable</div>
+                <div class="biais-toggle">
+                    <button class="biais-btn yes" onclick="setAnalyse('analyse_biais_fait', true)">✅ Oui, j'ai analysé le biais avant</button>
+                    <button class="biais-btn no"  onclick="setAnalyse('analyse_biais_fait', false)">❌ Non, entrée sans analyse</button>
+                </div>
+            </div>
+
+            <!-- Section 2 : Tendances multi-TF -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">2 — Tendances multi-TF <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:0.68rem;">(H=haussier B=baissier R=range sur select actif)</span></div>
+                <table class="tf-table">
+                    <thead>
+                        <tr>
+                            <th>TF</th>
+                            <th>Perso</th>
+                            <th>Classique</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>H4</td>
+                            <td><select class="tf-select" id="sel_h4_perso" data-field="analyse_h4_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                            <td><select class="tf-select" id="sel_h4_classique" data-field="analyse_h4_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>M15</td>
+                            <td><select class="tf-select" id="sel_m15_perso" data-field="analyse_m15_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                            <td><select class="tf-select" id="sel_m15_classique" data-field="analyse_m15_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>M1</td>
+                            <td><select class="tf-select" id="sel_m1_perso" data-field="analyse_m1_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                            <td><select class="tf-select" id="sel_m1_classique" data-field="analyse_m1_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 3 : Type setup -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">3 — Type de setup</div>
+                <div class="radio-group">
+                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retournement_htf" onclick="setRadio('analyse_type_setup', 'retournement_htf')">Retournement HTF</button>
+                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retracement_dans_htf" onclick="setRadio('analyse_type_setup', 'retracement_dans_htf')">Retracement dans HTF</button>
+                    <button class="radio-btn warn" data-field="analyse_type_setup" data-value="ambigu" onclick="setRadio('analyse_type_setup', 'ambigu')">Ambigu</button>
+                </div>
+            </div>
+
+            <!-- Section 4 : Fibo & structure -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">4 — Fibo & structure institutionnelle</div>
+                <div class="radio-group" style="margin-bottom:0.5rem;">
+                    <button class="radio-btn success" data-field="analyse_zone_fibo" data-value="62-79" onclick="setRadio('analyse_zone_fibo','62-79')">62–79%</button>
+                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="50-62" onclick="setRadio('analyse_zone_fibo','50-62')">50–62%</button>
+                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="79-100" onclick="setRadio('analyse_zone_fibo','79-100')">79–100%</button>
+                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="25-50" onclick="setRadio('analyse_zone_fibo','25-50')">25–50%</button>
+                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="0-25" onclick="setRadio('analyse_zone_fibo','0-25')">0–25%</button>
+                    <button class="radio-btn danger" data-field="analyse_zone_fibo" data-value="hors" onclick="setRadio('analyse_zone_fibo','hors')">Hors Fibo</button>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">Signature institutionnelle claire (manip + imbalance nets)</span>
+                    <div class="toggle-switch">
+                        <button class="toggle-sw-btn on"  data-field="analyse_manip_imbalance_claire" onclick="setToggle('analyse_manip_imbalance_claire', true)">Oui</button>
+                        <button class="toggle-sw-btn off" data-field="analyse_manip_imbalance_claire" onclick="setToggle('analyse_manip_imbalance_claire', false)">Non</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5 : Liquidités -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">5 — Liquidités</div>
+                <div class="toggle-row">
+                    <span class="toggle-label">Liquidité externe prise avant entrée</span>
+                    <div class="toggle-switch">
+                        <button class="toggle-sw-btn on"  data-field="analyse_liq_externe" onclick="setToggle('analyse_liq_externe', true)">Oui</button>
+                        <button class="toggle-sw-btn off" data-field="analyse_liq_externe" onclick="setToggle('analyse_liq_externe', false)">Non</button>
+                    </div>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">Liquidité interne Wyckoff présente (distribution/accumulation visible)</span>
+                    <div class="toggle-switch">
+                        <button class="toggle-sw-btn on"  data-field="analyse_liq_interne_wyckoff" onclick="setToggle('analyse_liq_interne_wyckoff', true)">Oui</button>
+                        <button class="toggle-sw-btn off" data-field="analyse_liq_interne_wyckoff" onclick="setToggle('analyse_liq_interne_wyckoff', false)">Non</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6 : BOS LTF -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">6 — BOS LTF déclencheur</div>
+                <div class="radio-group">
+                    <button class="radio-btn success" data-field="analyse_bos_ltf" data-value="net_corps" onclick="setRadio('analyse_bos_ltf','net_corps')">BOS net corps</button>
+                    <button class="radio-btn warn"    data-field="analyse_bos_ltf" data-value="faible_meche" onclick="setRadio('analyse_bos_ltf','faible_meche')">BOS faible mèche</button>
+                    <button class="radio-btn danger"  data-field="analyse_bos_ltf" data-value="absent" onclick="setRadio('analyse_bos_ltf','absent')">BOS absent</button>
+                </div>
+            </div>
+
+            <!-- Section 7 : Money management -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">7 — Money management théorique</div>
+                <div style="display:flex; gap:0.75rem; align-items:center; margin-bottom:0.5rem;">
+                    <label style="font-size:0.84rem; color:var(--text-secondary); flex:1;">Cible naturelle structurelle (en R)</label>
+                    <input type="number" class="form-input" id="inp_r_cible" step="0.1" placeholder="Ex: 4.5" style="width:90px;" oninput="scheduleAnalyseSave()">
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">Le scénario anticipé s'est bien réalisé après le trade</span>
+                    <div class="toggle-switch">
+                        <button class="toggle-sw-btn on"  data-field="analyse_tendance_continue_apres" onclick="setToggle('analyse_tendance_continue_apres', true)">Oui</button>
+                        <button class="toggle-sw-btn off" data-field="analyse_tendance_continue_apres" onclick="setToggle('analyse_tendance_continue_apres', false)">Non</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8 : Notes -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">8 — Notes libres</div>
+                <textarea class="form-textarea" id="inp_analyse_notes" placeholder="Observations, pattern particulier, doutes..." rows="3" style="resize:vertical;" oninput="scheduleAnalyseSave()"></textarea>
+            </div>
+
+            <!-- Footer sticky -->
+            <div class="analyse-footer">
+                <button class="btn btn-primary" onclick="markDoneAndNext()">✅ Analysé — Suivant non analysé →</button>
+                <button class="btn btn-secondary" onclick="saveAnalyseNow(false)">💾 Sauvegarder</button>
+                <span class="autosave-indicator" id="autosaveIndicator">—</span>
+            </div>
+
+        </div><!-- /tab-analyse -->
+
     </main>
 
     <!-- Modal Image -->
@@ -229,6 +383,204 @@
     </div>
 
     <style>
+        /* ── Onglets ── */
+        .tabs-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 0;
+            background: var(--bg-primary);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 0 1rem;
+        }
+        .tab-btn {
+            padding: 0.65rem 1.25rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            background: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: inherit;
+        }
+        .tab-btn:hover { color: var(--text-primary); }
+        .tab-btn.active { color: var(--accent-info); border-bottom-color: var(--accent-info); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── Analyse tab ── */
+        .analyse-header-sticky {
+            position: sticky;
+            top: 42px;
+            z-index: 40;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .analyse-trade-info {
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 160px;
+        }
+        .analyse-nav-btns {
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+        .analyse-nav-btn {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.18s;
+            white-space: nowrap;
+        }
+        .analyse-nav-btn:hover:not(:disabled) { border-color: var(--accent-info); color: var(--accent-info); }
+        .analyse-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .analyse-progress-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ── Sections analyse ── */
+        .analyse-section {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analyse-section:last-child { border-bottom: none; }
+        .analyse-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── Biais toggle ── */
+        .biais-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .biais-btn {
+            flex: 1;
+            padding: 0.55rem 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .biais-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .biais-btn.yes.active { background: rgba(0,184,148,0.15); color: var(--accent-bull); border-color: var(--accent-bull); }
+        .biais-btn.no.active  { background: rgba(231,76,60,0.15);  color: var(--accent-bear); border-color: var(--accent-bear); }
+
+        /* ── Tableau TF ── */
+        .tf-table { width: 100%; border-collapse: collapse; }
+        .tf-table th, .tf-table td { padding: 0.3rem 0.4rem; font-size: 0.82rem; text-align: center; }
+        .tf-table th { color: var(--text-muted); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; }
+        .tf-table td:first-child { text-align: left; font-weight: 700; color: var(--text-secondary); width: 40px; }
+        .tf-select {
+            width: 100%;
+            padding: 0.3rem 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .tf-select:focus { outline: none; border-color: var(--accent-info); }
+        .tf-select.haussier { border-color: var(--accent-bull); color: var(--accent-bull); background: rgba(0,184,148,0.08); }
+        .tf-select.baissier { border-color: var(--accent-bear); color: var(--accent-bear); background: rgba(231,76,60,0.08); }
+        .tf-select.range    { border-color: var(--accent-warning); color: var(--accent-warning); background: rgba(255,165,2,0.08); }
+
+        /* ── Radios compact ── */
+        .radio-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .radio-btn {
+            padding: 0.35rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.81rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.18s;
+        }
+        .radio-btn:hover { border-color: var(--accent-info); color: var(--accent-info); }
+        .radio-btn.active { background: var(--accent-info); color: #fff; border-color: var(--accent-info); }
+        .radio-btn.active.danger { background: var(--accent-bear); border-color: var(--accent-bear); }
+        .radio-btn.active.warn   { background: var(--accent-warning); border-color: var(--accent-warning); color: #111; }
+        .radio-btn.active.success{ background: var(--accent-bull); border-color: var(--accent-bull); color: #111; }
+
+        /* ── Toggle mini ── */
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.4rem; }
+        .toggle-row:last-child { margin-bottom: 0; }
+        .toggle-label { font-size: 0.84rem; color: var(--text-secondary); flex: 1; }
+        .toggle-switch { display: flex; gap: 0.3rem; }
+        .toggle-sw-btn {
+            padding: 0.25rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: transparent;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+            color: var(--text-muted);
+        }
+        .toggle-sw-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .toggle-sw-btn.on.active  { background: rgba(0,184,148,0.15); color: var(--accent-bull); border-color: var(--accent-bull); }
+        .toggle-sw-btn.off.active { background: rgba(231,76,60,0.12); color: var(--accent-bear); border-color: var(--accent-bear); }
+
+        /* ── Footer sticky analyse ── */
+        .analyse-footer {
+            position: sticky;
+            bottom: 0;
+            z-index: 40;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 0.65rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .analyse-footer .btn-primary { flex: 1; }
+
+        /* Auto-save indicator */
+        .autosave-indicator {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-left: auto;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        .autosave-indicator.saving { color: var(--accent-info); }
+        .autosave-indicator.saved  { color: var(--accent-bull); }
+
         /* Banner extension */
         .extension-banner {
             background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05));
@@ -804,6 +1156,275 @@
             if (e.key === 'Escape') closeModal();
             if (e.ctrlKey && e.key === 's') { e.preventDefault(); handleSave(); }
         });
+
+        // ─── ONGLET ANALYSE ──────────────────────────────────────────────────────────
+
+        // State analyse
+        const analyseState = {};
+        let unanalysedIds = [];
+        let allIds = [];
+        let autosaveTimer = null;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tab}`));
+            if (tab === 'analyse' && tradeId) initAnalyseTab();
+        }
+
+        async function initAnalyseTab() {
+            // Charger les données d'analyse si le trade existe
+            if (!tradeId) return;
+            try {
+                const trade = await getTrade(tradeId);
+                loadAnalyseData(trade);
+                updateAnalyseHeader(trade);
+            } catch(e) { console.error('Erreur init analyse:', e); }
+
+            // Charger navigation
+            try {
+                unanalysedIds = await getUnanalysedIds();
+                allIds = await getAllTradeIds();
+                updateNavButtons();
+            } catch(e) { console.error('Erreur nav analyse:', e); }
+
+            // Progress global
+            try {
+                const prog = await getAnalyseProgress();
+                document.getElementById('analyseProgressLabel').textContent = `${prog.done}/${prog.total} analysés`;
+            } catch(e) {}
+        }
+
+        function updateAnalyseHeader(trade) {
+            const statusShort = { tp: 'TP', sl: 'SL', be: 'BE', encours: '⏳', positif: '💰' };
+            const r = trade.r_obtenu != null ? ` · ${trade.r_obtenu > 0 ? '+' : ''}${trade.r_obtenu}R` : '';
+            const dir = (trade.direction || '').toUpperCase();
+            document.getElementById('analyseTradeInfo').textContent =
+                `${trade.trade_date || '—'} ${trade.trade_time ? trade.trade_time.slice(0,5) : ''} · ${trade.asset || '?'} ${dir} · ${statusShort[trade.status] || '?'}${r}`;
+
+            // Lien TradingView
+            const tvBtn = document.getElementById('btnTradingView');
+            const symbol = trade.asset ? trade.asset.replace(/[^A-Z0-9]/g, '') : '';
+            tvBtn.href = `https://www.tradingview.com/chart/?symbol=${symbol}`;
+        }
+
+        function updateNavButtons() {
+            const idx = unanalysedIds.indexOf(tradeId);
+            const btnPrev = document.getElementById('btnPrevUnanalysed');
+            const btnNext = document.getElementById('btnNextUnanalysed');
+            if (!btnPrev || !btnNext) return;
+
+            if (unanalysedIds.length === 0) {
+                btnPrev.disabled = true;
+                btnNext.disabled = true;
+                document.getElementById('analyseProgressLabel').textContent = '✅ Tous analysés';
+                return;
+            }
+
+            // Précédent : trade non analysé avant celui-ci (en ordre chrono)
+            const prevIdx = idx > 0 ? idx - 1 : -1;
+            const nextIdx = idx < unanalysedIds.length - 1 ? idx + 1 : -1;
+
+            // Si le trade courant n'est pas dans la liste non analysés, chercher les voisins non analysés parmi tous les trades
+            if (idx === -1) {
+                // Ce trade est analysé — trouver le plus proche non analysé
+                const currentAllIdx = allIds.indexOf(tradeId);
+                const prevUnanalysed = unanalysedIds.filter(id => allIds.indexOf(id) < currentAllIdx).pop();
+                const nextUnanalysed = unanalysedIds.find(id => allIds.indexOf(id) > currentAllIdx);
+                btnPrev.disabled = !prevUnanalysed;
+                btnNext.disabled = !nextUnanalysed;
+                btnPrev.onclick = prevUnanalysed ? () => navToTrade(prevUnanalysed) : null;
+                btnNext.onclick = nextUnanalysed ? () => navToTrade(nextUnanalysed) : null;
+            } else {
+                btnPrev.disabled = prevIdx < 0;
+                btnNext.disabled = nextIdx < 0;
+                btnPrev.onclick = prevIdx >= 0 ? () => navToTrade(unanalysedIds[prevIdx]) : null;
+                btnNext.onclick = nextIdx >= 0 ? () => navToTrade(unanalysedIds[nextIdx]) : null;
+            }
+        }
+
+        function navToTrade(id) {
+            window.location.href = `trade.html?id=${id}&tab=analyse`;
+        }
+
+        async function navUnanalysed(direction) {
+            // Fallback if onclick not set by updateNavButtons
+            const idx = unanalysedIds.indexOf(tradeId);
+            const newIdx = idx + direction;
+            if (newIdx >= 0 && newIdx < unanalysedIds.length) {
+                navToTrade(unanalysedIds[newIdx]);
+            }
+        }
+
+        // ─── Chargement des données analyse dans le formulaire ───────────────────────
+
+        function loadAnalyseData(trade) {
+            // Biais
+            if (trade.analyse_biais_fait === true)  setBiaisActive(true);
+            else if (trade.analyse_biais_fait === false) setBiaisActive(false);
+
+            // TF selects
+            const tfMap = {
+                sel_h4_perso: 'analyse_h4_perso', sel_h4_classique: 'analyse_h4_classique',
+                sel_m15_perso: 'analyse_m15_perso', sel_m15_classique: 'analyse_m15_classique',
+                sel_m1_perso: 'analyse_m1_perso', sel_m1_classique: 'analyse_m1_classique',
+            };
+            Object.entries(tfMap).forEach(([selId, field]) => {
+                const el = document.getElementById(selId);
+                if (el && trade[field]) { el.value = trade[field]; updateTfSelectStyle(el); }
+            });
+
+            // Radios
+            ['analyse_type_setup', 'analyse_zone_fibo', 'analyse_bos_ltf'].forEach(field => {
+                if (trade[field]) setRadio(field, trade[field], true);
+            });
+
+            // Toggles
+            ['analyse_manip_imbalance_claire', 'analyse_liq_externe', 'analyse_liq_interne_wyckoff', 'analyse_tendance_continue_apres'].forEach(field => {
+                if (trade[field] !== null && trade[field] !== undefined) setToggle(field, trade[field], true);
+            });
+
+            // Inputs
+            if (trade.analyse_r_cible_naturelle != null) document.getElementById('inp_r_cible').value = trade.analyse_r_cible_naturelle;
+            if (trade.analyse_notes) document.getElementById('inp_analyse_notes').value = trade.analyse_notes;
+
+            // Copier dans analyseState
+            Object.keys(trade).filter(k => k.startsWith('analyse_')).forEach(k => { analyseState[k] = trade[k]; });
+        }
+
+        // ─── Setters UI ──────────────────────────────────────────────────────────────
+
+        function setBiaisActive(val) {
+            analyseState['analyse_biais_fait'] = val;
+            document.querySelectorAll('.biais-btn').forEach(b => b.classList.remove('active'));
+            if (val === true)  document.querySelector('.biais-btn.yes')?.classList.add('active');
+            if (val === false) document.querySelector('.biais-btn.no')?.classList.add('active');
+            scheduleAnalyseSave();
+        }
+
+        function setRadio(field, value, silent = false) {
+            analyseState[field] = value;
+            document.querySelectorAll(`[data-field="${field}"]`).forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === value);
+            });
+            if (!silent) scheduleAnalyseSave();
+        }
+
+        function setToggle(field, value, silent = false) {
+            analyseState[field] = value;
+            document.querySelectorAll(`[data-field="${field}"]`).forEach(btn => {
+                const isOn  = btn.classList.contains('on');
+                const isOff = btn.classList.contains('off');
+                btn.classList.toggle('active', (isOn && value === true) || (isOff && value === false));
+            });
+            if (!silent) scheduleAnalyseSave();
+        }
+
+        function setAnalyse(field, value) {
+            if (field === 'analyse_biais_fait') { setBiaisActive(value); return; }
+            analyseState[field] = value;
+            scheduleAnalyseSave();
+        }
+
+        function onTfChange(sel) {
+            analyseState[sel.dataset.field] = sel.value || null;
+            updateTfSelectStyle(sel);
+            scheduleAnalyseSave();
+        }
+
+        function updateTfSelectStyle(sel) {
+            sel.classList.remove('haussier', 'baissier', 'range');
+            if (sel.value) sel.classList.add(sel.value);
+        }
+
+        // ─── Auto-save ───────────────────────────────────────────────────────────────
+
+        function scheduleAnalyseSave() {
+            clearTimeout(autosaveTimer);
+            setAutosaveIndicator('saving');
+            autosaveTimer = setTimeout(() => saveAnalyseNow(false, true), 500);
+        }
+
+        async function saveAnalyseNow(markDone = false, silent = false) {
+            if (!tradeId) return;
+            const payload = { ...analyseState };
+
+            // Lire les inputs texte/number
+            const rCible = parseFloat(document.getElementById('inp_r_cible').value);
+            payload.analyse_r_cible_naturelle = isNaN(rCible) ? null : rCible;
+            payload.analyse_notes = document.getElementById('inp_analyse_notes').value.trim() || null;
+
+            if (markDone) {
+                payload.analyse_posthoc_done = true;
+                payload.analyse_posthoc_date = new Date().toISOString();
+            }
+
+            try {
+                await saveAnalyse(tradeId, payload);
+                if (!silent) showToast('✅ Analyse sauvegardée');
+                setAutosaveIndicator('saved');
+                setTimeout(() => setAutosaveIndicator('idle'), 2000);
+            } catch(e) {
+                console.error('Erreur save analyse:', e);
+                if (!silent) showToast('❌ Erreur sauvegarde', true);
+                setAutosaveIndicator('idle');
+            }
+        }
+
+        function setAutosaveIndicator(state) {
+            const el = document.getElementById('autosaveIndicator');
+            if (!el) return;
+            el.className = 'autosave-indicator';
+            if (state === 'saving') { el.classList.add('saving'); el.textContent = '⏳ Sauvegarde...'; }
+            else if (state === 'saved') { el.classList.add('saved'); el.textContent = '✅ Sauvegardé'; }
+            else { el.textContent = ''; }
+        }
+
+        async function markDoneAndNext() {
+            await saveAnalyseNow(true);
+            // Recharger la liste des non-analysés et naviguer vers le suivant
+            try {
+                unanalysedIds = await getUnanalysedIds();
+                // Le trade courant vient d'être marqué analysé, trouver le suivant non analysé
+                const currentAllIdx = allIds.indexOf(tradeId);
+                const nextId = unanalysedIds.find(id => allIds.indexOf(id) > currentAllIdx)
+                            || unanalysedIds.find(id => allIds.indexOf(id) < currentAllIdx); // wraparound
+                if (nextId) {
+                    navToTrade(nextId);
+                } else {
+                    showToast('🎉 Tous les trades sont analysés !');
+                    updateNavButtons();
+                }
+            } catch(e) {
+                showToast('✅ Analyse sauvegardée');
+            }
+        }
+
+        // ─── Raccourcis clavier H/B/R sur selects TF ─────────────────────────────────
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const active = document.activeElement;
+            if (!active || !active.classList.contains('tf-select')) return;
+            const map = { 'h': 'haussier', 'b': 'baissier', 'r': 'range' };
+            const val = map[e.key.toLowerCase()];
+            if (val) {
+                e.preventDefault();
+                active.value = val;
+                onTfChange(active);
+                // Focus sur le select suivant dans le tableau
+                const selects = [...document.querySelectorAll('.tf-select')];
+                const idx = selects.indexOf(active);
+                if (idx < selects.length - 1) selects[idx + 1].focus();
+            }
+        });
+
+        // Auto-ouvrir onglet analyse si ?tab=analyse dans l'URL
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('tab') === 'analyse') {
+                // Attendre que le DOM soit prêt (l'init DOMContentLoaded charge le trade)
+                setTimeout(() => switchTab('analyse'), 100);
+            }
+        })();
     </script>
 </body>
 </html>

@@ -130,7 +130,53 @@ async function getAssets() {
         .from('trades')
         .select('asset')
         .order('asset');
-    
+
     if (error) throw error;
     return [...new Set(data.map(t => t.asset))];
+}
+
+// Sauvegarder les champs analyse_* d'un trade
+async function saveAnalyse(id, analyseData) {
+    const { data, error } = await supabaseClient
+        .from('trades')
+        .update(analyseData)
+        .eq('id', id)
+        .select()
+        .single();
+    if (error) throw error;
+    return data;
+}
+
+// Compter trades analysés vs total
+async function getAnalyseProgress() {
+    const { data, error } = await supabaseClient
+        .from('trades')
+        .select('id, analyse_posthoc_done');
+    if (error) throw error;
+    const total = data.length;
+    const done = data.filter(t => t.analyse_posthoc_done).length;
+    return { total, done };
+}
+
+// Récupérer IDs des trades non analysés (ordre chronologique)
+async function getUnanalysedIds() {
+    const { data, error } = await supabaseClient
+        .from('trades')
+        .select('id, trade_date, trade_time')
+        .or('analyse_posthoc_done.is.null,analyse_posthoc_done.eq.false')
+        .order('trade_date', { ascending: true })
+        .order('trade_time', { ascending: true });
+    if (error) throw error;
+    return data.map(t => t.id);
+}
+
+// Récupérer IDs de tous les trades (ordre chronologique)
+async function getAllTradeIds() {
+    const { data, error } = await supabaseClient
+        .from('trades')
+        .select('id, trade_date, trade_time')
+        .order('trade_date', { ascending: true })
+        .order('trade_time', { ascending: true });
+    if (error) throw error;
+    return data.map(t => t.id);
 }
