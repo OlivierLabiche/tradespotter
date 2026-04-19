@@ -421,16 +421,9 @@
             <!-- Section 7 : Money management -->
             <div class="analyse-section">
                 <div class="analyse-section-title">7 — Money management théorique</div>
-                <div style="display:flex; gap:0.75rem; align-items:center; margin-bottom:0.5rem;">
+                <div style="display:flex; gap:0.75rem; align-items:center;">
                     <label style="font-size:0.84rem; color:var(--text-secondary); flex:1;">Cible naturelle structurelle (en R)</label>
                     <input type="number" class="form-input" id="inp_r_cible" step="0.1" placeholder="Ex: 4.5" style="width:90px;" oninput="scheduleAnalyseSave()">
-                </div>
-                <div class="toggle-row">
-                    <span class="toggle-label">Le scénario anticipé s'est bien réalisé après le trade</span>
-                    <div class="toggle-switch">
-                        <button class="toggle-sw-btn on"  data-field="analyse_tendance_continue_apres" onclick="setToggle('analyse_tendance_continue_apres', true)">Oui</button>
-                        <button class="toggle-sw-btn off" data-field="analyse_tendance_continue_apres" onclick="setToggle('analyse_tendance_continue_apres', false)">Non</button>
-                    </div>
                 </div>
             </div>
 
@@ -1399,10 +1392,6 @@
             const fiboEl = document.getElementById('sel_zone_fibo');
             if (fiboEl && trade.analyse_zone_fibo) fiboEl.value = trade.analyse_zone_fibo;
 
-            // Toggles
-            ['analyse_tendance_continue_apres'].forEach(field => {
-                if (trade[field] !== null && trade[field] !== undefined) setToggle(field, trade[field], true);
-            });
 
             // Inputs
             if (trade.analyse_r_cible_naturelle != null) document.getElementById('inp_r_cible').value = trade.analyse_r_cible_naturelle;
