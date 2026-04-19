@@ -403,10 +403,18 @@
             <!-- Section 6 : BOS LTF -->
             <div class="analyse-section">
                 <div class="analyse-section-title">6 — BOS LTF déclencheur</div>
-                <div class="radio-group">
+                <div class="radio-group" style="margin-bottom:0.6rem;">
                     <button class="radio-btn success" data-field="analyse_bos_ltf" data-value="net_corps" onclick="setRadio('analyse_bos_ltf','net_corps')">BOS net corps</button>
                     <button class="radio-btn warn"    data-field="analyse_bos_ltf" data-value="faible_meche" onclick="setRadio('analyse_bos_ltf','faible_meche')">BOS faible mèche</button>
                     <button class="radio-btn danger"  data-field="analyse_bos_ltf" data-value="absent" onclick="setRadio('analyse_bos_ltf','absent')">BOS absent</button>
+                </div>
+                <div class="liq-group-label">Mode d'entrée</div>
+                <div class="radio-group">
+                    <button class="radio-btn" data-field="analyse_mode_entree" data-value="stop"                   onclick="setRadio('analyse_mode_entree','stop')">Stop sur cassure</button>
+                    <button class="radio-btn" data-field="analyse_mode_entree" data-value="limit"                  onclick="setRadio('analyse_mode_entree','limit')">Limit retracement</button>
+                    <button class="radio-btn" data-field="analyse_mode_entree" data-value="marche"                 onclick="setRadio('analyse_mode_entree','marche')">Market</button>
+                    <button class="radio-btn" data-field="analyse_mode_entree" data-value="double_bloc_stop"          onclick="setRadio('analyse_mode_entree','double_bloc_stop')">Double Bloc stop classique</button>
+                    <button class="radio-btn" data-field="analyse_mode_entree" data-value="double_bloc_stop_raffine" onclick="setRadio('analyse_mode_entree','double_bloc_stop_raffine')">Double Bloc stop raffiné</button>
                 </div>
             </div>
 
@@ -1383,7 +1391,7 @@
             });
 
             // Radios
-            ['analyse_type_setup', 'analyse_bos_ltf', 'analyse_liq_externe_qualite', 'analyse_liq_interne_qualite'].forEach(field => {
+            ['analyse_type_setup', 'analyse_bos_ltf', 'analyse_mode_entree', 'analyse_liq_externe_qualite', 'analyse_liq_interne_qualite'].forEach(field => {
                 if (trade[field]) setRadio(field, trade[field], true);
             });
 
