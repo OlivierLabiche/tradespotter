@@ -306,6 +306,16 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Weekly</td>
+                            <td><select class="tf-select" id="sel_weekly_perso" data-field="analyse_weekly_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                            <td><select class="tf-select" id="sel_weekly_classique" data-field="analyse_weekly_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>Daily</td>
+                            <td><select class="tf-select" id="sel_daily_perso" data-field="analyse_daily_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                            <td><select class="tf-select" id="sel_daily_classique" data-field="analyse_daily_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
+                        </tr>
+                        <tr>
                             <td>H4</td>
                             <td><select class="tf-select" id="sel_h4_perso" data-field="analyse_h4_perso" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
                             <td><select class="tf-select" id="sel_h4_classique" data-field="analyse_h4_classique" onchange="onTfChange(this)"><option value="">—</option><option value="haussier">Haussier</option><option value="baissier">Baissier</option><option value="range">Range</option></select></td>
@@ -1318,6 +1328,8 @@
 
             // TF selects tendances (avec coloration)
             const tfMap = {
+                sel_weekly_perso: 'analyse_weekly_perso', sel_weekly_classique: 'analyse_weekly_classique',
+                sel_daily_perso: 'analyse_daily_perso', sel_daily_classique: 'analyse_daily_classique',
                 sel_h4_perso: 'analyse_h4_perso', sel_h4_classique: 'analyse_h4_classique',
                 sel_m15_perso: 'analyse_m15_perso', sel_m15_classique: 'analyse_m15_classique',
                 sel_m1_perso: 'analyse_m1_perso', sel_m1_classique: 'analyse_m1_classique',
