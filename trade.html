@@ -239,6 +239,25 @@
                 </div>
             </div>
 
+            <!-- Verdicts globaux -->
+            <div class="analyse-section verdicts-section">
+                <div class="analyse-section-title">Verdicts globaux</div>
+                <div class="verdict-row">
+                    <div class="verdict-row-label">Biais correct</div>
+                    <div class="verdict-toggle">
+                        <button class="verdict-btn yes" data-field="analyse_biais_correct" onclick="setVerdictBoolean('analyse_biais_correct', true)">✅ Oui</button>
+                        <button class="verdict-btn no"  data-field="analyse_biais_correct" onclick="setVerdictBoolean('analyse_biais_correct', false)">❌ Non</button>
+                    </div>
+                </div>
+                <div class="verdict-row">
+                    <div class="verdict-row-label">POI correct</div>
+                    <div class="verdict-toggle">
+                        <button class="verdict-btn yes" data-field="analyse_poi_correct" onclick="setVerdictBoolean('analyse_poi_correct', true)">✅ Oui</button>
+                        <button class="verdict-btn no"  data-field="analyse_poi_correct" onclick="setVerdictBoolean('analyse_poi_correct', false)">❌ Non</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section 0 : Structure TF du trade -->
             <div class="analyse-section">
                 <div class="analyse-section-title">0 — Structure TF du trade</div>
@@ -345,43 +364,37 @@
                 </div>
             </div>
 
-            <!-- Section 4 : Fibo & structure -->
+            <!-- Section 4 : Fibo -->
             <div class="analyse-section">
-                <div class="analyse-section-title">4 — Fibo & structure institutionnelle</div>
-                <div style="margin-bottom:0.5rem;">
-                    <select class="tf-select" id="sel_zone_fibo" data-field="analyse_zone_fibo" onchange="onTfStructChange(this)" style="max-width:200px;">
-                        <option value="">— Zone Fibo —</option>
-                        <option value="0-38.2">0–38.2%</option>
-                        <option value="38.2-50">38.2–50%</option>
-                        <option value="50-61.8">50–61.8%</option>
-                        <option value="61.8-78.6">61.8–78.6%</option>
-                        <option value="78.6+">78.6%+</option>
-                    </select>
-                </div>
-                <div class="toggle-row">
-                    <span class="toggle-label">Signature institutionnelle claire (manip + imbalance nets)</span>
-                    <div class="toggle-switch">
-                        <button class="toggle-sw-btn on"  data-field="analyse_manip_imbalance_claire" onclick="setToggle('analyse_manip_imbalance_claire', true)">Oui</button>
-                        <button class="toggle-sw-btn off" data-field="analyse_manip_imbalance_claire" onclick="setToggle('analyse_manip_imbalance_claire', false)">Non</button>
-                    </div>
-                </div>
+                <div class="analyse-section-title">4 — Fibo</div>
+                <select class="tf-select" id="sel_zone_fibo" data-field="analyse_zone_fibo" onchange="onTfStructChange(this)" style="max-width:200px;">
+                    <option value="">— Zone Fibo —</option>
+                    <option value="0-38.2">0–38.2%</option>
+                    <option value="38.2-50">38.2–50%</option>
+                    <option value="50-61.8">50–61.8%</option>
+                    <option value="61.8-78.6">61.8–78.6%</option>
+                    <option value="78.6+">78.6%+</option>
+                    <option value="hors">Hors Fibo</option>
+                </select>
             </div>
 
             <!-- Section 5 : Liquidités -->
             <div class="analyse-section">
                 <div class="analyse-section-title">5 — Liquidités</div>
-                <div class="toggle-row">
-                    <span class="toggle-label">Liquidité externe prise avant entrée</span>
-                    <div class="toggle-switch">
-                        <button class="toggle-sw-btn on"  data-field="analyse_liq_externe" onclick="setToggle('analyse_liq_externe', true)">Oui</button>
-                        <button class="toggle-sw-btn off" data-field="analyse_liq_externe" onclick="setToggle('analyse_liq_externe', false)">Non</button>
+                <div class="liq-group">
+                    <div class="liq-group-label">Liquidité externe prise avant entrée</div>
+                    <div class="radio-group">
+                        <button class="radio-btn danger" data-field="analyse_liq_externe_qualite" data-value="absente" onclick="setRadio('analyse_liq_externe_qualite','absente')">Absente</button>
+                        <button class="radio-btn warn"   data-field="analyse_liq_externe_qualite" data-value="faible"  onclick="setRadio('analyse_liq_externe_qualite','faible')">Faible</button>
+                        <button class="radio-btn success" data-field="analyse_liq_externe_qualite" data-value="nette"  onclick="setRadio('analyse_liq_externe_qualite','nette')">Nette <span style="font-weight:400;font-size:0.72rem;">(trendline 3+pts)</span></button>
                     </div>
                 </div>
-                <div class="toggle-row">
-                    <span class="toggle-label">Liquidité interne Wyckoff présente (distribution/accumulation visible)</span>
-                    <div class="toggle-switch">
-                        <button class="toggle-sw-btn on"  data-field="analyse_liq_interne_wyckoff" onclick="setToggle('analyse_liq_interne_wyckoff', true)">Oui</button>
-                        <button class="toggle-sw-btn off" data-field="analyse_liq_interne_wyckoff" onclick="setToggle('analyse_liq_interne_wyckoff', false)">Non</button>
+                <div class="liq-group">
+                    <div class="liq-group-label">Liquidité interne Wyckoff présente</div>
+                    <div class="radio-group">
+                        <button class="radio-btn danger" data-field="analyse_liq_interne_qualite" data-value="absente" onclick="setRadio('analyse_liq_interne_qualite','absente')">Absente</button>
+                        <button class="radio-btn warn"   data-field="analyse_liq_interne_qualite" data-value="faible"  onclick="setRadio('analyse_liq_interne_qualite','faible')">Faible</button>
+                        <button class="radio-btn success" data-field="analyse_liq_interne_qualite" data-value="nette"  onclick="setRadio('analyse_liq_interne_qualite','nette')">Nette <span style="font-weight:400;font-size:0.72rem;">(BC/AR/ST/Spring)</span></button>
                     </div>
                 </div>
             </div>
@@ -573,11 +586,27 @@
         .tf-select.baissier { border-color: var(--accent-bear); color: var(--accent-bear); background: rgba(231,76,60,0.08); }
         .tf-select.range    { border-color: var(--accent-warning); color: var(--accent-warning); background: rgba(255,165,2,0.08); }
 
+        /* ── Verdicts globaux ── */
+        .verdicts-section { background: rgba(0,0,0,0.015); }
+        .verdict-row { margin-bottom: 0.55rem; }
+        .verdict-row:last-child { margin-bottom: 0; }
+        .verdict-row-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .verdict-toggle { display: flex; gap: 0.4rem; }
+        .verdict-btn { flex: 1; padding: 0.5rem 0.5rem; border: 2px solid var(--border-color); border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.18s; text-align: center; }
+        .verdict-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .verdict-btn.yes.active { background: rgba(0,184,148,0.15); color: var(--accent-bull); border-color: var(--accent-bull); }
+        .verdict-btn.no.active  { background: rgba(231,76,60,0.15);  color: var(--accent-bear); border-color: var(--accent-bear); }
+
         /* ── Structure TF du trade ── */
         .tf-struct-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-        .tf-struct-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 90px; }
+        .tf-struct-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1 1 100px; min-width: 0; }
         .tf-struct-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
-        .tf-struct-label em { display: block; font-style: italic; font-weight: 400; font-size: 0.68rem; color: var(--text-muted); margin-top: 0.1rem; }
+        .tf-struct-label em { display: block; font-style: italic; font-weight: 400; font-size: 0.68rem; color: var(--text-muted); margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ── Liquidités radio ── */
+        .liq-group { margin-bottom: 0.5rem; }
+        .liq-group:last-child { margin-bottom: 0; }
+        .liq-group-label { font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
 
         /* ── Radios compact ── */
         .radio-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -1348,8 +1377,13 @@
                 if (el && trade[field]) el.value = trade[field];
             });
 
+            // Verdicts booléens
+            ['analyse_biais_correct', 'analyse_poi_correct'].forEach(field => {
+                if (trade[field] !== null && trade[field] !== undefined) setVerdictBoolean(field, trade[field], true);
+            });
+
             // Radios
-            ['analyse_type_setup', 'analyse_bos_ltf'].forEach(field => {
+            ['analyse_type_setup', 'analyse_bos_ltf', 'analyse_liq_externe_qualite', 'analyse_liq_interne_qualite'].forEach(field => {
                 if (trade[field]) setRadio(field, trade[field], true);
             });
 
@@ -1358,7 +1392,7 @@
             if (fiboEl && trade.analyse_zone_fibo) fiboEl.value = trade.analyse_zone_fibo;
 
             // Toggles
-            ['analyse_manip_imbalance_claire', 'analyse_liq_externe', 'analyse_liq_interne_wyckoff', 'analyse_tendance_continue_apres'].forEach(field => {
+            ['analyse_tendance_continue_apres'].forEach(field => {
                 if (trade[field] !== null && trade[field] !== undefined) setToggle(field, trade[field], true);
             });
 
@@ -1413,6 +1447,16 @@
         function onTfStructChange(sel) {
             analyseState[sel.dataset.field] = sel.value || null;
             scheduleAnalyseSave();
+        }
+
+        function setVerdictBoolean(field, val, silent = false) {
+            analyseState[field] = val;
+            document.querySelectorAll(`[data-field="${field}"]`).forEach(btn => {
+                const isYes = btn.classList.contains('yes');
+                const isNo  = btn.classList.contains('no');
+                btn.classList.toggle('active', (isYes && val === true) || (isNo && val === false));
+            });
+            if (!silent) scheduleAnalyseSave();
         }
 
         function updateTfSelectStyle(sel) {
