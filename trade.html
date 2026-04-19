@@ -338,13 +338,16 @@
             <!-- Section 4 : Fibo & structure -->
             <div class="analyse-section">
                 <div class="analyse-section-title">4 — Fibo & structure institutionnelle</div>
-                <div class="radio-group" style="margin-bottom:0.5rem;">
-                    <button class="radio-btn success" data-field="analyse_zone_fibo" data-value="62-79" onclick="setRadio('analyse_zone_fibo','62-79')">62–79%</button>
-                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="50-62" onclick="setRadio('analyse_zone_fibo','50-62')">50–62%</button>
-                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="79-100" onclick="setRadio('analyse_zone_fibo','79-100')">79–100%</button>
-                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="25-50" onclick="setRadio('analyse_zone_fibo','25-50')">25–50%</button>
-                    <button class="radio-btn" data-field="analyse_zone_fibo" data-value="0-25" onclick="setRadio('analyse_zone_fibo','0-25')">0–25%</button>
-                    <button class="radio-btn danger" data-field="analyse_zone_fibo" data-value="hors" onclick="setRadio('analyse_zone_fibo','hors')">Hors Fibo</button>
+                <div style="margin-bottom:0.5rem;">
+                    <select class="tf-select" id="sel_zone_fibo" data-field="analyse_zone_fibo" onchange="onTfStructChange(this)" style="max-width:200px;">
+                        <option value="">— Zone Fibo —</option>
+                        <option value="0-38.2">0–38.2%</option>
+                        <option value="38.2-50">38.2–50%</option>
+                        <option value="50-61.8">50–61.8%</option>
+                        <option value="61.8-78.6">61.8–78.6%</option>
+                        <option value="78.6+">78.6%+</option>
+                        <option value="hors">Hors Fibo</option>
+                    </select>
                 </div>
                 <div class="toggle-row">
                     <span class="toggle-label">Signature institutionnelle claire (manip + imbalance nets)</span>
@@ -1335,9 +1338,13 @@
             });
 
             // Radios
-            ['analyse_type_setup', 'analyse_zone_fibo', 'analyse_bos_ltf'].forEach(field => {
+            ['analyse_type_setup', 'analyse_bos_ltf'].forEach(field => {
                 if (trade[field]) setRadio(field, trade[field], true);
             });
+
+            // Zone Fibo (select)
+            const fiboEl = document.getElementById('sel_zone_fibo');
+            if (fiboEl && trade.analyse_zone_fibo) fiboEl.value = trade.analyse_zone_fibo;
 
             // Toggles
             ['analyse_manip_imbalance_claire', 'analyse_liq_externe', 'analyse_liq_interne_wyckoff', 'analyse_tendance_continue_apres'].forEach(field => {
