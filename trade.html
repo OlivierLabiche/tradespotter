@@ -239,6 +239,51 @@
                 </div>
             </div>
 
+            <!-- Section 0 : Structure TF du trade -->
+            <div class="analyse-section">
+                <div class="analyse-section-title">0 — Structure TF du trade</div>
+                <div class="tf-struct-row">
+                    <div class="tf-struct-field">
+                        <label class="tf-struct-label">TF POI <span style="font-weight:400;color:var(--text-muted);">Imbalance / biais</span></label>
+                        <select class="tf-select" id="sel_tf_poi" data-field="analyse_tf_poi" onchange="onTfStructChange(this)">
+                            <option value="">—</option>
+                            <option value="Daily">Daily</option>
+                            <option value="H4">H4</option>
+                            <option value="H2">H2</option>
+                            <option value="H1">H1</option>
+                            <option value="M30">M30</option>
+                            <option value="M15">M15</option>
+                            <option value="M5">M5</option>
+                            <option value="M1">M1</option>
+                        </select>
+                    </div>
+                    <div class="tf-struct-field">
+                        <label class="tf-struct-label">TF BOS <span style="font-weight:400;color:var(--text-muted);">BOS attendu</span></label>
+                        <select class="tf-select" id="sel_tf_bos" data-field="analyse_tf_bos" onchange="onTfStructChange(this)">
+                            <option value="">—</option>
+                            <option value="H1">H1</option>
+                            <option value="M30">M30</option>
+                            <option value="M15">M15</option>
+                            <option value="M5">M5</option>
+                            <option value="M1">M1</option>
+                            <option value="s30">s30</option>
+                            <option value="s10">s10</option>
+                        </select>
+                    </div>
+                    <div class="tf-struct-field">
+                        <label class="tf-struct-label">TF Re-entry <em>Si BOS impulsif, TF pour retracement</em></label>
+                        <select class="tf-select" id="sel_tf_reentry" data-field="analyse_tf_reentry" onchange="onTfStructChange(this)">
+                            <option value="">—</option>
+                            <option value="M15">M15</option>
+                            <option value="M5">M5</option>
+                            <option value="M1">M1</option>
+                            <option value="s30">s30</option>
+                            <option value="s10">s10</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section 1 : Biais -->
             <div class="analyse-section">
                 <div class="analyse-section-title">1 — Analyse préalable</div>
@@ -281,10 +326,11 @@
 
             <!-- Section 3 : Type setup -->
             <div class="analyse-section">
-                <div class="analyse-section-title">3 — Type de setup</div>
+                <div class="analyse-section-title">3 — Type de setup <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:0.68rem;">(sur la TF POI)</span></div>
                 <div class="radio-group">
-                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retournement_htf" onclick="setRadio('analyse_type_setup', 'retournement_htf')">Retournement HTF</button>
-                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retracement_dans_htf" onclick="setRadio('analyse_type_setup', 'retracement_dans_htf')">Retracement dans HTF</button>
+                    <button class="radio-btn" data-field="analyse_type_setup" data-value="continuation" onclick="setRadio('analyse_type_setup', 'continuation')">Continuation</button>
+                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retracement" onclick="setRadio('analyse_type_setup', 'retracement')">Retracement</button>
+                    <button class="radio-btn" data-field="analyse_type_setup" data-value="retournement" onclick="setRadio('analyse_type_setup', 'retournement')">Retournement</button>
                     <button class="radio-btn warn" data-field="analyse_type_setup" data-value="ambigu" onclick="setRadio('analyse_type_setup', 'ambigu')">Ambigu</button>
                 </div>
             </div>
@@ -514,6 +560,12 @@
         .tf-select.haussier { border-color: var(--accent-bull); color: var(--accent-bull); background: rgba(0,184,148,0.08); }
         .tf-select.baissier { border-color: var(--accent-bear); color: var(--accent-bear); background: rgba(231,76,60,0.08); }
         .tf-select.range    { border-color: var(--accent-warning); color: var(--accent-warning); background: rgba(255,165,2,0.08); }
+
+        /* ── Structure TF du trade ── */
+        .tf-struct-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .tf-struct-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 90px; }
+        .tf-struct-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+        .tf-struct-label em { display: block; font-style: italic; font-weight: 400; font-size: 0.68rem; color: var(--text-muted); margin-top: 0.1rem; }
 
         /* ── Radios compact ── */
         .radio-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -1262,7 +1314,7 @@
             if (trade.analyse_biais_fait === true)  setBiaisActive(true);
             else if (trade.analyse_biais_fait === false) setBiaisActive(false);
 
-            // TF selects
+            // TF selects tendances (avec coloration)
             const tfMap = {
                 sel_h4_perso: 'analyse_h4_perso', sel_h4_classique: 'analyse_h4_classique',
                 sel_m15_perso: 'analyse_m15_perso', sel_m15_classique: 'analyse_m15_classique',
@@ -1271,6 +1323,15 @@
             Object.entries(tfMap).forEach(([selId, field]) => {
                 const el = document.getElementById(selId);
                 if (el && trade[field]) { el.value = trade[field]; updateTfSelectStyle(el); }
+            });
+
+            // TF structure du trade (sans coloration)
+            const tfStructMap = {
+                sel_tf_poi: 'analyse_tf_poi', sel_tf_bos: 'analyse_tf_bos', sel_tf_reentry: 'analyse_tf_reentry',
+            };
+            Object.entries(tfStructMap).forEach(([selId, field]) => {
+                const el = document.getElementById(selId);
+                if (el && trade[field]) el.value = trade[field];
             });
 
             // Radios
@@ -1328,6 +1389,11 @@
         function onTfChange(sel) {
             analyseState[sel.dataset.field] = sel.value || null;
             updateTfSelectStyle(sel);
+            scheduleAnalyseSave();
+        }
+
+        function onTfStructChange(sel) {
+            analyseState[sel.dataset.field] = sel.value || null;
             scheduleAnalyseSave();
         }
 
