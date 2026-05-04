@@ -170,6 +170,14 @@
                     <button class="result-btn positif" onclick="setStatus('positif')">💰 Positif</button>
                 </div>
 
+                <!-- Cible naturelle (TP uniquement) -->
+                <div id="cibleNaturelleRow" style="display:none; margin-top: 1rem;">
+                    <label class="checkbox-label" style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.92rem; color:var(--text-primary);">
+                        <input type="checkbox" id="cibleNaturelle" style="width:1.1rem; height:1.1rem; cursor:pointer; accent-color:var(--accent-bull);">
+                        Cible naturelle atteinte
+                    </label>
+                </div>
+
                 <!-- Problème principal -->
                 <div style="margin-top: 1.5rem;">
                     <div class="analyse-item">
@@ -919,6 +927,7 @@
 
                 // Résultat
                 if (trade.status) setStatus(trade.status);
+                if (trade.status === 'tp' && trade.cible_naturelle) document.getElementById('cibleNaturelle').checked = true;
                 if (trade.probleme_principal) setProbleme(trade.probleme_principal);
                 document.getElementById('rrVise').value = trade.rr_vise !== null && trade.rr_vise !== undefined ? trade.rr_vise : '';
                 document.getElementById('rObtenu').value = trade.r_obtenu !== null && trade.r_obtenu !== undefined ? trade.r_obtenu : '';
@@ -958,6 +967,8 @@
                 if (!rInput.value) rInput.value = 0;
             }
             updateStatusBadge(value);
+            document.getElementById('cibleNaturelleRow').style.display = (value === 'tp') ? 'block' : 'none';
+            if (value !== 'tp') document.getElementById('cibleNaturelle').checked = false;
         }
 
         function updateStatusBadge(status) {
@@ -1124,6 +1135,7 @@
                     mode: document.getElementById('mode').value,
 
                     status: state.status,
+                    cible_naturelle: state.status === 'tp' ? document.getElementById('cibleNaturelle').checked : null,
                     probleme_principal: state.problemePrincipal || null,
                     rr_vise: parseFloat(document.getElementById('rrVise').value) || null,
                     r_obtenu: (() => { const v = parseFloat(document.getElementById('rObtenu').value); return isNaN(v) ? null : v; })(),

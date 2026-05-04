@@ -49,6 +49,7 @@ CREATE TABLE trades (
     
     -- Résultat
     status          VARCHAR(20) DEFAULT 'encours',
+    cible_naturelle BOOLEAN,
     potentiel_r     DECIMAL(5,2),
     r_obtenu        DECIMAL(5,2),
     
